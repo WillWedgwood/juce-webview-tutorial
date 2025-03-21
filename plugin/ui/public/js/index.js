@@ -1,6 +1,6 @@
 import * as Juce from "./juce/index.js";
 
-console.log("JUCE frontend library successfully imported");
+console.log("JUCE frontend library successfully imported change");
 
 window.__JUCE__.backend.addEventListener(
   "exampleEvent",
@@ -89,17 +89,23 @@ document.addEventListener("DOMContentLoaded", () => {
     layout: { width: 200, height: 400, yaxis: { range: [-60, 500] } },
   });
 
-  window.__JUCE__.backend.addEventListener("classificationType", () => {
-    fetch(Juce.getBackendResourceAddress("classificationType.json"))
+  window.__JUCE__.backend.addEventListener("outputLevel", () => {
+    fetch(Juce.getBackendResourceAddress("outputLevel.json"))
       .then((response) => response.text())
-      .then((classificationType) => {
-        const levelData = JSON.parse(classificationType);
+      .then((outputLevel) => {
+        const levelData = JSON.parse(outputLevel);
+
+          // Use the first value of the array
+        const leftValue = Array.isArray(levelData.left) ? levelData.left[0] : levelData.left;
+
+        console.log("Received value of 'left':", levelData.left);
+
         Plotly.animate(
           "outputLevelPlot",
           {
             data: [
               {
-                y: [levelData.left - base],
+                y: [leftValue - base],
               },
             ],
             traces: [0],

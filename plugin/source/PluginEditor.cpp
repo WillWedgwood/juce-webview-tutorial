@@ -49,6 +49,7 @@ static const char* getMimeForExtension(const juce::String& extension) {
 
 juce::Identifier getExampleEventId() {
   static const juce::Identifier id{"exampleEvent"};
+  DBG("Hello from c++");
   return id;
 }
 
@@ -212,7 +213,7 @@ void AudioPluginAudioProcessorEditor::resized() {
 }
 
 void AudioPluginAudioProcessorEditor::timerCallback() {
-  webView.emitEventIfBrowserIsVisible("classificationType", juce::var{});
+  webView.emitEventIfBrowserIsVisible("outputLevel", juce::var{});
 }
 
 auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
@@ -222,7 +223,7 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
   const auto resourceToRetrieve =
       url == "/" ? "index.html" : url.fromFirstOccurrenceOf("/", false, false);
 
-  if (resourceToRetrieve == "classificationType.json") {
+  if (resourceToRetrieve == "outputLevel.json") {
     juce::DynamicObject::Ptr levelData{new juce::DynamicObject{}};
     juce::Array<juce::var> indicesAsVarArray;
     for (const auto& index : processorRef.getAudioClassification().indicesAboveThreshold)  // This needs to be sorted out!
