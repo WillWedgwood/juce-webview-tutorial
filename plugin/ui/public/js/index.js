@@ -86,14 +86,14 @@ document.addEventListener("DOMContentLoaded", () => {
         type: "bar",
       },
     ],
-    layout: { width: 200, height: 400, yaxis: { range: [-60, 0] } },
+    layout: { width: 200, height: 400, yaxis: { range: [-60, 500] } },
   });
 
-  window.__JUCE__.backend.addEventListener("outputLevel", () => {
-    fetch(Juce.getBackendResourceAddress("outputLevel.json"))
+  window.__JUCE__.backend.addEventListener("classificationType", () => {
+    fetch(Juce.getBackendResourceAddress("classificationType.json"))
       .then((response) => response.text())
-      .then((outputLevel) => {
-        const levelData = JSON.parse(outputLevel);
+      .then((classificationType) => {
+        const levelData = JSON.parse(classificationType);
         Plotly.animate(
           "outputLevelPlot",
           {

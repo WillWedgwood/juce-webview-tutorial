@@ -1,13 +1,13 @@
-#include "JuceWebViewTutorial/PluginEditor.h"
+#include "AQUA/PluginEditor.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_events/juce_events.h>
 #include <optional>
 #include <ranges>
-#include "JuceWebViewTutorial/PluginProcessor.h"
+#include "AQUA/PluginProcessor.h"
 #include "juce_core/juce_core.h"
 #include "juce_graphics/juce_graphics.h"
 #include "juce_gui_extra/juce_gui_extra.h"
-#include "JuceWebViewTutorial/ParameterIDs.hpp"
+#include "AQUA/ParameterIDs.hpp"
 #include <WebViewFiles.h>
 
 namespace webview_plugin {
@@ -212,7 +212,7 @@ void AudioPluginAudioProcessorEditor::resized() {
 }
 
 void AudioPluginAudioProcessorEditor::timerCallback() {
-  webView.emitEventIfBrowserIsVisible("outputLevel", juce::var{});
+  webView.emitEventIfBrowserIsVisible("classificationType", juce::var{});
 }
 
 auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
@@ -222,9 +222,13 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
   const auto resourceToRetrieve =
       url == "/" ? "index.html" : url.fromFirstOccurrenceOf("/", false, false);
 
-  if (resourceToRetrieve == "outputLevel.json") {
+  if (resourceToRetrieve == "classificationType.json") {
     juce::DynamicObject::Ptr levelData{new juce::DynamicObject{}};
-    levelData->setProperty("left", processorRef.outputLevelLeft.load());
+    juce::Array<juce::var> indicesAsVarArray;
+    for (const auto& index : processorRef.getAudioClassification().indicesAboveThreshold)  // This needs to be sorted out!
+        indicesAsVarArray.add(index);
+
+    levelData->setProperty("left", indicesAsVarArray);
     const auto jsonString = juce::JSON::toString(levelData.get());
     juce::MemoryInputStream stream{jsonString.getCharPointer(),
                                    jsonString.getNumBytesAsUTF8(), false};

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 # Version is needed by JUCE.
-project(JuceWebViewPlugin VERSION 0.1.0)
+project(AQUA VERSION 0.1.0)
 
 # Adds a plugin target (that's basically what the Projucer does).
 juce_add_plugin(${PROJECT_NAME}
@@ -12,10 +12,13 @@ juce_add_plugin(${PROJECT_NAME}
     PLUGIN_MANUFACTURER_CODE WFSD
     PLUGIN_CODE JWVT
     FORMATS AU VST3 Standalone
-    PRODUCT_NAME "JuceWebViewPlugin"
+    PRODUCT_NAME "AQUA"
     # This will force JUCE to look for the WebView2 NuGet package on Windows
     NEEDS_WEBVIEW2 TRUE
 )
+
+# Generate the JuceHeader.h file for this project
+juce_generate_juce_header(${PROJECT_NAME})
 
 get_target_property(PRODUCT_NAME ${PROJECT_NAME} JUCE_PRODUCT_NAME)
 get_target_property(COMPANY_NAME ${PROJECT_NAME} JUCE_COMPANY_NAME)
@@ -24,24 +27,25 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   JUCE_COMPANY_NAME="${COMPANY_NAME}"
   JUCE_PRODUCT_VERSION="${PROJECT_VERSION}")
 
-# Sets the source files of the plugin project.
-set(SOURCES
-        source/PluginEditor.cpp
-        source/PluginProcessor.cpp)
+# Automatically collect all .cpp and .h files in the source and include directories
+file(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
+file(GLOB HEADER_FILES ${INCLUDE_DIR}/*.h)
+
+# Sets the source files of the plugin project
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        ${SOURCE_FILES}
+        ${HEADER_FILES} # Optional: Include headers for IDE organization
+)
 
 # Adding a directory with the library/application name as a subfolder of the
 # include folder is a good practice. It helps avoid name clashes later on.
-set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/JuceWebViewTutorial")
+set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/AQUA")
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        ${SOURCES}
-        ${INCLUDE_DIR}/PluginEditor.h
-        ${INCLUDE_DIR}/PluginProcessor.h
-)
-
-# Sets the include directories of the plugin project.
+# Sets the include directories of the plugin project
 target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${JUCE_SOURCE_DIR}/modules
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
@@ -77,18 +81,40 @@ juce_add_binary_data(WebViewFiles
     SOURCES ${TARGET_WEBVIEW_FILES_ZIP_PATH}
 )
 
+# List of JUCE modules found in your project
+set(JUCE_MODULES
+    juce_audio_basics
+    juce_audio_devices
+    juce_audio_formats
+    juce_audio_plugin_client
+    juce_audio_processors
+    juce_audio_utils
+    juce_core
+    juce_data_structures
+    juce_events
+    juce_graphics
+    juce_gui_basics
+    juce_gui_extra
+)
+
 # Links to all necessary dependencies. The present ones are recommended by JUCE.
 # If you use one of the additional modules, like the DSP module, you need to specify it here.
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         juce::juce_audio_utils
         juce::juce_dsp
+        ${JUCE_MODULES}
+        ${PROJECT_SOURCE_DIR}/../External_Libs/onnxruntime-osx-universal2-1.18.1/lib/libonnxruntime.1.18.1.dylib
+        ${PROJECT_SOURCE_DIR}/../External_Libs/arm64/libsamplerate/build/lib/libsamplerate.0.dylib
         WebViewFiles
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
 )
+
+# Add JUCE include directories
+target_include_directories(${PROJECT_NAME} PRIVATE ${JUCE_SOURCE_DIR}/modules)
 
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
@@ -104,3 +130,12 @@ set_source_files_properties(${SOURCES} PROPERTIES COMPILE_OPTIONS "${CXX_PROJECT
 
 # In Visual Studio this command provides a nice grouping of source files in "filters".
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+# Suppress warnings from ONNX Runtime
+target_compile_options(${PROJECT_NAME}
+    PRIVATE
+        -Wno-shadow
+        -Wno-extra-semi
+        -Wno-sign-conversion
+        -Wno-c++98-compat-extra-semi
+)

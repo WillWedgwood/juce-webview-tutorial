@@ -1,7 +1,7 @@
-#include "JuceWebViewTutorial/PluginProcessor.h"
+#include "AQUA/PluginProcessor.h"
 #include <juce_audio_processors/juce_audio_processors.h>
-#include "JuceWebViewTutorial/PluginEditor.h"
-#include "JuceWebViewTutorial/ParameterIDs.hpp"
+#include "AQUA/PluginEditor.h"
+#include "AQUA/ParameterIDs.hpp"
 #include <cmath>
 #include <functional>
 #include <juce_dsp/juce_dsp.h>
@@ -82,17 +82,7 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate,
                                               int samplesPerBlock) {
   using namespace juce;
 
-  envelopeFollower.prepare(dsp::ProcessSpec{
-      .sampleRate = sampleRate,
-      .maximumBlockSize = static_cast<uint32>(samplesPerBlock),
-      .numChannels = static_cast<uint32>(getTotalNumOutputChannels())});
-  envelopeFollower.setAttackTime(200.f);
-  envelopeFollower.setReleaseTime(200.f);
-  envelopeFollower.setLevelCalculationType(
-      dsp::BallisticsFilter<float>::LevelCalculationType::peak);
-
-  envelopeFollowerOutputBuffer.setSize(getTotalNumOutputChannels(),
-                                       samplesPerBlock);
+  audioClassifier.prepareToPlay(sampleRate, samplesPerBlock, 16000.0f);
 }
 
 void AudioPluginAudioProcessor::releaseResources() {
@@ -145,6 +135,13 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     return;
   }
 
+  auto* channelData = buffer.getWritePointer(0); // Use the first channel
+
+  for (int i = 0; i < buffer.getNumSamples(); ++i)
+  {
+      audioClassifier.processSample(channelData[i]);
+  }
+
   juce::dsp::AudioBlock<float> block{buffer};
   if (parameters.distortionType->getIndex() == 1) {
     // tanh(kx)/tanh(k)
@@ -164,17 +161,6 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
   }
 
   buffer.applyGain(parameters.gain->get());
-
-  const auto inBlock =
-      juce::dsp::AudioBlock<float>{buffer}.getSubsetChannelBlock(
-          0u, static_cast<size_t>(getTotalNumOutputChannels()));
-  auto outBlock =
-      juce::dsp::AudioBlock<float>{envelopeFollowerOutputBuffer}.getSubBlock(
-          0u, static_cast<size_t>(buffer.getNumSamples()));
-  envelopeFollower.process(
-      juce::dsp::ProcessContextNonReplacing<float>{inBlock, outBlock});
-  outputLevelLeft = juce::Decibels::gainToDecibels(
-      outBlock.getSample(0, static_cast<int>(outBlock.getNumSamples()) - 1));
 }
 
 bool AudioPluginAudioProcessor::hasEditor() const {

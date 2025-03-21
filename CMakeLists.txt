@@ -27,6 +27,18 @@ CPMAddPackage(
     SOURCE_DIR ${LIB_DIR}/juce
 )
 
+# Add include directories for the external libraries
+include_directories(
+    ${PROJECT_SOURCE_DIR}/External_Libs/onnxruntime-osx-universal2-1.18.1/include
+    ${PROJECT_SOURCE_DIR}/External_Libs/arm64/libsamplerate/build/include
+)
+
+# Add library search paths
+link_directories(
+    ${PROJECT_SOURCE_DIR}/External_Libs/onnxruntime-osx-universal2-1.18.1/lib
+    ${PROJECT_SOURCE_DIR}/External_Libs/arm64/libsamplerate/build/lib
+)
+
 # Install Microsoft.Web.WebView2 NuGet package to allow WebViews on Windows
 if (MSVC)
   message(STATUS "Setting up WebView dependencies")

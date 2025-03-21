@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libWebViewFiles.a CMakeFiles/WebViewFiles.dir/juce_binarydata_WebViewFiles/JuceLibraryCode/BinaryData1.cpp.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libWebViewFiles.a

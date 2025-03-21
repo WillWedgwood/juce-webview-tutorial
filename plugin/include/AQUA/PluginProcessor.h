@@ -3,6 +3,12 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
 
+#include <JuceHeader.h>
+#include <samplerate.h>
+#include <vector>
+
+#include "AudioClassification.h"
+
 namespace webview_plugin {
 class AudioPluginAudioProcessor : public juce::AudioProcessor {
 public:
@@ -45,7 +51,8 @@ public:
     return *parameters.distortionType;
   }
 
-  std::atomic<float> outputLevelLeft;
+    // Send classification message to editor
+    AudioClassification& getAudioClassification() { return audioClassifier; }
 
 private:
   struct Parameters {
@@ -59,8 +66,10 @@ private:
 
   Parameters parameters;
   juce::AudioProcessorValueTreeState state;
-  juce::dsp::BallisticsFilter<float> envelopeFollower;
-  juce::AudioBuffer<float> envelopeFollowerOutputBuffer;
+
+  // ========= Audio Classification ======
+  bool audioClassification;
+  AudioClassification audioClassifier;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessor)
 };
