@@ -34,47 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const slider = document.getElementById("gainSlider");
-  const sliderState = Juce.getSliderState("GAIN");
-  slider.oninput = function () {
-    sliderState.setNormalisedValue(this.value);
-  };
-
-  slider.step = 1 / sliderState.properties.numSteps;
-
-  sliderState.valueChangedEvent.addListener(() => {
-    slider.value = sliderState.getNormalisedValue();
-  });
-
-  const bypassCheckbox = document.getElementById("bypassCheckbox");
-  const bypassToggleState = Juce.getToggleState("BYPASS");
-  bypassCheckbox.oninput = function () {
-    bypassToggleState.setValue(this.checked);
-  };
-  bypassToggleState.valueChangedEvent.addListener(() => {
-    bypassCheckbox.checked = bypassToggleState.getValue();
-  });
-
-  const distortionTypeComboBox = document.getElementById(
-    "distortionTypeComboBox"
-  );
-  const distortionTypeComboBoxState = Juce.getComboBoxState(
-    "DISTORTION_TYPE"
-  );
-  distortionTypeComboBoxState.propertiesChangedEvent.addListener(() => {
-    distortionTypeComboBox.innerHTML = "";
-    distortionTypeComboBoxState.properties.choices.forEach((choice) => {
-      distortionTypeComboBox.innerHTML += `<option value=\"${choice}\">${choice}</option>`;
-    });
-  });
-  distortionTypeComboBoxState.valueChangedEvent.addListener(() => {
-    distortionTypeComboBox.selectedIndex =
-      distortionTypeComboBoxState.getChoiceIndex();
-  });
-  distortionTypeComboBox.oninput = function () {
-    distortionTypeComboBoxState.setChoiceIndex(this.selectedIndex);
-  };
-
   // Plot with Plotly
   const base = -60;
   Plotly.newPlot("outputLevelPlot", {

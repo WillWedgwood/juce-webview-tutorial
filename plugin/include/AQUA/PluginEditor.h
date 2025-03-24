@@ -31,25 +31,7 @@ private:
 
   AudioPluginAudioProcessor& processorRef;
 
-  juce::Slider gainSlider{"gain slider"};
-  juce::SliderParameterAttachment gainSliderAttachment;
-
-  juce::ToggleButton bypassButton{"Bypass"};
-  juce::ButtonParameterAttachment bypassButtonAttachment;
-
-  juce::Label distortionTypeLabel{"distortion type label", "Distortion"};
-  juce::ComboBox distortionTypeComboBox{"distortion type combo box"};
-  juce::ComboBoxParameterAttachment distortionTypeComboBoxAttachment;
-
-  juce::WebSliderRelay webGainRelay;
-  juce::WebToggleButtonRelay webBypassRelay;
-  juce::WebComboBoxRelay webDistortionTypeRelay;
-
   juce::WebBrowserComponent webView;
-
-  juce::WebSliderParameterAttachment webGainSliderAttachment;
-  juce::WebToggleButtonParameterAttachment webBypassToggleAttachment;
-  juce::WebComboBoxParameterAttachment webDistortionTypeComboBoxAttachment;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

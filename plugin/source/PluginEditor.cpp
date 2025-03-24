@@ -81,18 +81,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
     AudioPluginAudioProcessor& p)
     : AudioProcessorEditor(&p),
       processorRef(p),
-      gainSliderAttachment{
-          *processorRef.getState().getParameter(id::GAIN.getParamID()),
-          gainSlider, nullptr},
-      bypassButtonAttachment{
-          *processorRef.getState().getParameter(id::BYPASS.getParamID()),
-          bypassButton, nullptr},
-      distortionTypeComboBoxAttachment{*processorRef.getState().getParameter(
-                                           id::DISTORTION_TYPE.getParamID()),
-                                       distortionTypeComboBox, nullptr},
-      webGainRelay{id::GAIN.getParamID()},
-      webBypassRelay{id::BYPASS.getParamID()},
-      webDistortionTypeRelay{id::DISTORTION_TYPE.getParamID()},
       webView{
           juce::WebBrowserComponent::Options{}
               .withBackend(
@@ -131,18 +119,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
                              completion) {
                     nativeFunction(args, std::move(completion));
                   })
-              .withOptionsFrom(webGainRelay)
-              .withOptionsFrom(webBypassRelay)
-              .withOptionsFrom(webDistortionTypeRelay)},
-      webGainSliderAttachment{
-          *processorRef.getState().getParameter(id::GAIN.getParamID()),
-          webGainRelay, nullptr},
-      webBypassToggleAttachment{
-          *processorRef.getState().getParameter(id::BYPASS.getParamID()),
-          webBypassRelay, nullptr},
-      webDistortionTypeComboBoxAttachment{*processorRef.getState().getParameter(
-                                              id::DISTORTION_TYPE.getParamID()),
-                                          webDistortionTypeRelay, nullptr} {
+                }
+  {
   addAndMakeVisible(webView);
 
   // WebBrowserComponent can display any URL
@@ -178,20 +156,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
 
   addAndMakeVisible(labelUpdatedFromJavaScript);
 
-  gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBar);
-  addAndMakeVisible(gainSlider);
-
-  addAndMakeVisible(bypassButton);
-
-  addAndMakeVisible(distortionTypeLabel);
-
-  const auto& distortionTypeParameter =
-      processorRef.getDistortionTypeParameter();
-  distortionTypeComboBox.addItemList(distortionTypeParameter.choices, 1);
-  distortionTypeComboBox.setSelectedItemIndex(
-      distortionTypeParameter.getIndex(), juce::dontSendNotification);
-  addAndMakeVisible(distortionTypeComboBox);
-
   setResizable(true, true);
   setSize(800, 600);
 
@@ -206,10 +170,6 @@ void AudioPluginAudioProcessorEditor::resized() {
   runJavaScriptButton.setBounds(bounds.removeFromTop(50).reduced(5));
   emitJavaScriptEventButton.setBounds(bounds.removeFromTop(50).reduced(5));
   labelUpdatedFromJavaScript.setBounds(bounds.removeFromTop(50).reduced(5));
-  gainSlider.setBounds(bounds.removeFromTop(50).reduced(5));
-  bypassButton.setBounds(bounds.removeFromTop(50).reduced(10));
-  distortionTypeLabel.setBounds(bounds.removeFromTop(50).reduced(5));
-  distortionTypeComboBox.setBounds(bounds.removeFromTop(50).reduced(5));
 }
 
 void AudioPluginAudioProcessorEditor::timerCallback() {
@@ -230,6 +190,7 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
         indicesAsVarArray.add(index);
 
     levelData->setProperty("left", indicesAsVarArray);
+
     const auto jsonString = juce::JSON::toString(levelData.get());
     juce::MemoryInputStream stream{jsonString.getCharPointer(),
                                    jsonString.getNumBytesAsUTF8(), false};
