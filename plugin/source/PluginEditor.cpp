@@ -103,15 +103,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
               .withInitialisationData("pluginVersion", JUCE_PRODUCT_VERSION)
               .withUserScript("console.log(\"C++ backend here: This is run "
                               "before any other loading happens\");")
-              .withEventListener(
-                  "exampleJavaScriptEvent",
-                  [this](juce::var objectFromFrontend) {
-                    labelUpdatedFromJavaScript.setText(
-                        "example JavaScript event occurred with value " +
-                            objectFromFrontend.getProperty("emittedCount", 0)
-                                .toString(),
-                        juce::dontSendNotification);
-                  })
               .withNativeFunction(
                   juce::Identifier{"nativeFunction"},
                   [this](const juce::Array<juce::var>& args,
@@ -132,30 +123,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
   // This can be used for hot reloading
   // webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
 
-  runJavaScriptButton.onClick = [this] {
-    constexpr auto JAVASCRIPT_TO_RUN{"console.log(\"Hello from C++!\");"};
-    webView.evaluateJavascript(
-        JAVASCRIPT_TO_RUN,
-        [](juce::WebBrowserComponent::EvaluationResult result) {
-          if (const auto* resultPtr = result.getResult()) {
-            std::cout << "JavaScript evaluation result: "
-                      << resultPtr->toString() << std::endl;
-          } else {
-            std::cout << "JavaScript evaluation failed because "
-                      << result.getError()->message << std::endl;
-          }
-        });
-  };
-  addAndMakeVisible(runJavaScriptButton);
-
-  emitJavaScriptEventButton.onClick = [this] {
-    static const juce::var valueToEmit{42.0};
-    webView.emitEventIfBrowserIsVisible(getExampleEventId(), valueToEmit);
-  };
-  addAndMakeVisible(emitJavaScriptEventButton);
-
-  addAndMakeVisible(labelUpdatedFromJavaScript);
-
   setResizable(true, true);
   setSize(800, 600);
 
@@ -166,10 +133,7 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {}
 
 void AudioPluginAudioProcessorEditor::resized() {
   auto bounds = getBounds();
-  webView.setBounds(bounds.removeFromRight(getWidth() / 2));
-  runJavaScriptButton.setBounds(bounds.removeFromTop(50).reduced(5));
-  emitJavaScriptEventButton.setBounds(bounds.removeFromTop(50).reduced(5));
-  labelUpdatedFromJavaScript.setBounds(bounds.removeFromTop(50).reduced(5));
+  webView.setBounds(getLocalBounds().reduced(10));
 }
 
 void AudioPluginAudioProcessorEditor::timerCallback() {
@@ -216,9 +180,6 @@ void AudioPluginAudioProcessorEditor::nativeFunction(
   for (const auto& string : args | transform(&juce::var::toString)) {
     concatenatedString += string;
   }
-  labelUpdatedFromJavaScript.setText(
-      "Native function called with args: " + concatenatedString,
-      juce::dontSendNotification);
   completion("nativeFunction callback: All OK!");
 }
 }  // namespace webview_plugin

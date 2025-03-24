@@ -2,18 +2,7 @@ import * as Juce from "./juce/index.js";
 
 console.log("JUCE frontend library successfully imported change");
 
-window.__JUCE__.backend.addEventListener(
-  "exampleEvent",
-  (objectFromBackend) => {
-    console.log(objectFromBackend);
-  }
-);
-
 const data = window.__JUCE__.initialisationData;
-
-document.getElementById("vendor").innerText = data.vendor;
-document.getElementById("pluginName").innerText = data.pluginName;
-document.getElementById("pluginVersion").innerText = data.pluginVersion;
 
 const nativeFunction = Juce.getNativeFunction("nativeFunction");
 
@@ -25,14 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const emitEventButton = document.getElementById("emitEventButton");
-  let emittedCount = 0;
-  emitEventButton.addEventListener("click", () => {
-    emittedCount++;
-    window.__JUCE__.backend.emitEvent("exampleJavaScriptEvent", {
-      emittedCount: emittedCount,
-    });
-  });
 
   // Plot with Plotly
   const base = -60;
