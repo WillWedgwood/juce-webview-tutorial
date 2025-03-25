@@ -127,72 +127,85 @@ function updateGraph() {
   console.log("Updating graph..."); // ✅ Debugging: Ensure function is running
 
   // Update x-axis domain (shifting time window)
-  xScale.domain([Date.now() - 60000, Date.now()]);
-  svg.select(".x-axis").call(xAxis);
+  const now = Date.now();
+  xScale.domain([now - 60000, now]); // Last 60 seconds
+
+  // Smoothly update the x-axis
+  svg.select(".x-axis")
+    .transition()
+    .duration(500) // Smooth transition duration
+    .call(xAxis);
 
   // Update y-axis domain and redraw it
-  yScale.domain(labels);
+  yScale.domain(labels.concat("Blank")); // Include "Blank" in the y-axis domain
   yAxisGroup
-      .attr("transform", `translate(${width - margin.right},0)`) // Ensure y-axis stays on the right
-      .call(yAxis);
+    .attr("transform", `translate(${width - margin.right},0)`) // Ensure y-axis stays on the right
+    .call(yAxis);
 
   // Reapply right-click functionality to updated y-axis labels
   yAxisGroup.selectAll(".tick text")
-      .on("contextmenu", function (event, label) {
-          event.preventDefault();
-          contextMenu
-              .style("display", "block")
-              .style("left", `${event.pageX}px`)
-              .style("top", `${event.pageY}px`)
-              .html(`<div class="menu-item" data-label="${label}">Remove from plot</div>`);
+    .on("contextmenu", function (event, label) {
+      event.preventDefault();
+      contextMenu
+        .style("display", "block")
+        .style("left", `${event.pageX}px`)
+        .style("top", `${event.pageY}px`)
+        .html(`<div class="menu-item" data-label="${label}">Remove from plot</div>`);
 
-          contextMenu.select(".menu-item").on("click", function () {
-              const labelToRemove = d3.select(this).attr("data-label");
-              console.log("Removing label:", labelToRemove);
+      contextMenu.select(".menu-item").on("click", function () {
+        const labelToRemove = d3.select(this).attr("data-label");
+        console.log("Removing label:", labelToRemove);
 
-              // Remove the label from the labels array and add it to removedLabels
-              labels = labels.filter(l => l !== labelToRemove);
-              removedLabels.push(labelToRemove);
+        // Remove the label from the labels array and add it to removedLabels
+        labels = labels.filter(l => l !== labelToRemove);
+        removedLabels.push(labelToRemove);
 
-              // Hide the context menu and update the graph
-              contextMenu.style("display", "none");
-              updateGraph();
-              updateRemovedLabelsUI();
-          });
+        // Hide the context menu and update the graph
+        contextMenu.style("display", "none");
+        updateGraph();
+        updateRemovedLabelsUI();
       });
+    });
 
   // Bind data to circles
   const circles = svg.selectAll("circle")
-      .data(data.filter(d => labels.includes(d.label)), d => d.id); // Filter data to include only visible labels
+    .data(data, d => d.id); // Bind data by unique ID
 
   // Enter: Add new circles
   circles.enter()
-      .append("circle")
-      .attr("cx", d => xScale(d.timestamp))
-      .attr("cy", d => yScale(d.label) + yScale.bandwidth() / 2)
-      .attr("r", 8)
-      .attr("fill", ColourPalette.red) // Use a color from the palette
-      .merge(circles) // Merge with updates
-      .transition().duration(500)
-      .attr("cx", d => xScale(d.timestamp))
-      .attr("cy", d => yScale(d.label) + yScale.bandwidth() / 2);
+    .append("circle")
+    .attr("cx", d => xScale(d.timestamp))
+    .attr("cy", d => yScale(d.label) + yScale.bandwidth() / 2)
+    .attr("r", 8)
+    .attr("fill", d => d.label === "Blank" ? "transparent" : ColourPalette.red) // Hide "Blank" points
+    .attr("opacity", d => d.label === "Blank" ? 0 : 1) // Set opacity to 0 for "Blank" points
+    .merge(circles) // Merge with updates
+    .transition()
+    .duration(500) // Smooth transition for circles
+    .attr("cx", d => xScale(d.timestamp))
+    .attr("cy", d => yScale(d.label) + yScale.bandwidth() / 2);
 
   // Remove old data points
   circles.exit().remove();
 }
 
-// Function to add new classification
 function addClassification(label) {
-  console.log("Adding classification:", label); // ✅ Debugging
+  // If the label is null, use a placeholder "Blank" classification
+  const classificationLabel = label || "Blank";
+
+  // Add the classification to the data array
+  console.log("Adding classification:", classificationLabel); // ✅ Debugging
   const newEntry = { 
       id: Date.now(), 
       timestamp: Date.now(), 
-      label: label 
+      label: classificationLabel 
   };
   data.push(newEntry);
 
-  // Keep only last 60 seconds of data
+  // Keep only the last 60 seconds of data
   data = data.filter(d => d.timestamp > Date.now() - 60000);
+
+  // Update the graph
   updateGraph();
 }
 
@@ -273,23 +286,41 @@ d3.select("body").on("click", () => {
   classificationDropdown.style("display", "none");
 });
 
-// Function to map specific values to classification labels
 function mapValueToClassification(value) {
-  // Check for specific values and return the corresponding classification
-  if (value === 494) {
-      console.log("Mapping value 494 to Silence");
-      return ClassificationLabels.SILENCE; // Map 494 to "Silence"
+  // Define the classification mappings
+  const windNoiseIndices = new Set([36, 40, 190, 277, 278, 279, 453]);
+  const rainNoiseIndices = new Set([282, 283, 284, 285, 286, 438, 439, 442, 443, 444, 445, 446, 447]);
+  const signalNoiseMap = new Map([
+    [494, ClassificationLabels.SILENCE],    // Silence detected
+    [506, ClassificationLabels.ECHO],       // Echo detected
+    [509, ClassificationLabels.STATIC],     // Static detected
+    [511, ClassificationLabels.DISTORTION], // Distortion detected
+    [514, ClassificationLabels.WHITE_NOISE], // White noise detected
+    [515, ClassificationLabels.PINK_NOISE]  // Pink noise detected
+  ]);
+
+  // Check for wind noise
+  if (windNoiseIndices.has(value)) {
+    console.log("Mapping value to Wind");
+    return ClassificationLabels.WIND;
   }
 
-  else {
-    console.log("Mapping value 494 to Silence");
-    return ClassificationLabels.WIND; // Map 494 to "Silence"
+  // Check for rain noise
+  if (rainNoiseIndices.has(value)) {
+    console.log("Mapping value to Rain");
+    return ClassificationLabels.RAIN;
   }
 
-  // Default behavior: Use the value to index into the labels array
-  const mappedLabel = labels[value % labels.length];
-  console.log(`Mapping value ${value} to ${mappedLabel}`);
-  return mappedLabel;
+  // Check for specific signal noise
+  if (signalNoiseMap.has(value)) {
+    const mappedLabel = signalNoiseMap.get(value);
+    console.log(`Mapping value ${value} to ${mappedLabel}`);
+    return mappedLabel;
+  }
+
+  // If no match, return null
+  console.log(`Value ${value} does not match any classification.`);
+  return null;
 }
 
 // Listen for the "outputLevel" event from the backend
@@ -307,8 +338,13 @@ window.__JUCE__.backend.addEventListener("outputLevel", () => {
           // Map the leftValue to a classification label using the helper function
           const classificationLabel = mapValueToClassification(leftValue);
 
-          console.log("Classification Value is:", leftValue);
-  
+          console.log("Classification Value is:", classificationLabel);
+
+          // Add the classification to the graph
           addClassification(classificationLabel);
       });
 });
+
+setInterval(() => {
+  updateGraph();
+}, 500); // Update the graph every 500ms
