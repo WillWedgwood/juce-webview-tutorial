@@ -142,18 +142,19 @@ void AudioPluginAudioProcessorEditor::timerCallback() {
 
 auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
     -> std::optional<Resource> {
-  std::cout << "ResourceProvider called with " << url << std::endl;
+  //std::cout << "ResourceProvider called with " << url << std::endl;
 
   const auto resourceToRetrieve =
       url == "/" ? "index.html" : url.fromFirstOccurrenceOf("/", false, false);
 
   if (resourceToRetrieve == "outputLevel.json") {
     juce::DynamicObject::Ptr levelData{new juce::DynamicObject{}};
-    juce::Array<juce::var> indicesAsVarArray;
-    for (const auto& index : processorRef.getAudioClassification().indicesAboveThreshold)  // This needs to be sorted out!
-        indicesAsVarArray.add(index);
+  
+    // Get the maxIndex from the audio classifier
+    int maxIndex = processorRef.getAudioClassification().maxIndex; // Ensure this method exists
 
-    levelData->setProperty("left", indicesAsVarArray);
+    // Set the maxIndex as the "left" property
+    levelData->setProperty("left", maxIndex);
 
     const auto jsonString = juce::JSON::toString(levelData.get());
     juce::MemoryInputStream stream{jsonString.getCharPointer(),

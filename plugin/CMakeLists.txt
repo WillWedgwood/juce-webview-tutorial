@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.22)
 # Version is needed by JUCE.
 project(AQUA VERSION 0.1.0)
 
+# Specify the target architecture(s)
+set(CMAKE_OSX_ARCHITECTURES "arm64") # Universal binary for Apple Silicon and Intel
+
 # Adds a plugin target (that's basically what the Projucer does).
 juce_add_plugin(${PROJECT_NAME}
     COMPANY_NAME WolfSound

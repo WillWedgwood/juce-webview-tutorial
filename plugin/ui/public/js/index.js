@@ -218,12 +218,6 @@ function updateRemovedLabelsUI() {
   });
 }
 
-// Add classifications at random intervals (for testing)
-setInterval(() => {
-  const randomLabel = labels[Math.floor(Math.random() * labels.length)];
-  addClassification(randomLabel);
-}, 2000);
-
 // Add event listener for the "Add Classification" button
 const addClassificationBtn = d3.select("#add-classification-btn");
 const classificationDropdown = d3.select("#classification-dropdown");
@@ -277,4 +271,44 @@ addClassificationBtn.on("click", function (event) {
 // Hide the dropdown when clicking elsewhere
 d3.select("body").on("click", () => {
   classificationDropdown.style("display", "none");
+});
+
+// Function to map specific values to classification labels
+function mapValueToClassification(value) {
+  // Check for specific values and return the corresponding classification
+  if (value === 494) {
+      console.log("Mapping value 494 to Silence");
+      return ClassificationLabels.SILENCE; // Map 494 to "Silence"
+  }
+
+  else {
+    console.log("Mapping value 494 to Silence");
+    return ClassificationLabels.WIND; // Map 494 to "Silence"
+  }
+
+  // Default behavior: Use the value to index into the labels array
+  const mappedLabel = labels[value % labels.length];
+  console.log(`Mapping value ${value} to ${mappedLabel}`);
+  return mappedLabel;
+}
+
+// Listen for the "outputLevel" event from the backend
+window.__JUCE__.backend.addEventListener("outputLevel", () => {
+  fetch(Juce.getBackendResourceAddress("outputLevel.json"))
+      .then((response) => response.text())
+      .then((outputLevel) => {
+          const levelData = JSON.parse(outputLevel);
+
+          // Use the first value of the array
+          const leftValue = Array.isArray(levelData.left) ? levelData.left[0] : levelData.left;
+
+          console.log("Received value of 'left':", leftValue);
+
+          // Map the leftValue to a classification label using the helper function
+          const classificationLabel = mapValueToClassification(leftValue);
+
+          console.log("Classification Value is:", leftValue);
+  
+          addClassification(classificationLabel);
+      });
 });

@@ -121,11 +121,11 @@ void AudioClassification::processSample(const float sample)
             }
         }
 
-        // Optionally, print the indices above the threshold
-        for (int index : indicesAboveThreshold)
-        {
-            DBG("Index above threshold: " << index);
-        }
+        // // Optionally, print the indices above the threshold
+        // for (int index : indicesAboveThreshold)
+        // {
+        //     DBG("Index above threshold: " << index);
+        // }
 
     }
 }
@@ -165,5 +165,3 @@ void AudioClassification::testONNXRuntime() {
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "Test");
     std::cout << "ONNX Runtime initialized successfully!" << std::endl;
 }
-
-
