@@ -35,6 +35,7 @@ public:
     
     std::atomic<int> maxIndex; // Thread-safe shared state
     std::vector<int> indicesAboveThreshold;
+    std::span<float> output;
     
     void prepareToPlay(const double sampleRate, const int samplesPerBlock, const int detectionFrequency);
     

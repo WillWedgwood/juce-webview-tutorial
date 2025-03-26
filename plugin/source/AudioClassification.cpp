@@ -104,7 +104,7 @@ void AudioClassification::processSample(const float sample)
         SRC.interpolateAudio(outputFifoSpan, classifierBufferSpan);
 
         // Perform classification
-        std::span<float> output = processClassification(classifierBufferSpan);
+        output = processClassification(classifierBufferSpan);
 
         maxIndex = static_cast<int>(std::distance(output.begin(), std::max_element(output.begin(), output.end())));
         DBG("Max index: " << maxIndex);

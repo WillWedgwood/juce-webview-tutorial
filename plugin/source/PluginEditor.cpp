@@ -152,9 +152,19 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
   
     // Get the maxIndex from the audio classifier
     int maxIndex = processorRef.getAudioClassification().maxIndex; // Ensure this method exists
+    std::span outputScores = processorRef.getAudioClassification().output; // Ensure this method exists
 
     // Set the maxIndex as the "left" property
     levelData->setProperty("left", maxIndex);
+
+    // Convert outputScores (std::span<float>) to juce::Array<juce::var>
+    juce::Array<juce::var> scoresArray;
+    for (const auto& score : outputScores) {
+        scoresArray.add(score);
+    }
+
+    // Add the scoresArray to levelData
+    levelData->setProperty("scores", scoresArray);
 
     const auto jsonString = juce::JSON::toString(levelData.get());
     juce::MemoryInputStream stream{jsonString.getCharPointer(),

@@ -27,11 +27,13 @@ window.__JUCE__.backend.addEventListener("outputLevel", () => {
     .then((response) => response.text())
     .then((outputLevel) => {
       const levelData = JSON.parse(outputLevel);
+      const scores = levelData.scores;
 
       // Use the first value of the array
       const leftValue = Array.isArray(levelData.left) ? levelData.left[0] : levelData.left;
 
       console.log("Received value of 'left':", leftValue);
+      console.log("Received value of 'scores':", levelData.scores);
 
       // Map the leftValue to a classification label using the helper function
       const classificationLabel = mapValueToClassification(leftValue);
@@ -50,4 +52,4 @@ window.__JUCE__.backend.addEventListener("outputLevel", () => {
 
 setInterval(() => {
   updateGraph(svg, xScale, yScale, xAxis, yAxis, data, labels, removedLabels);
-}, 500);
+}, 480); // to ensure the graph updates match the backend updates
