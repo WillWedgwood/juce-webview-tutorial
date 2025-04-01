@@ -36,8 +36,6 @@ export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confide
   const now = Date.now();
   xScale.domain([now - 60000, now]);
 
-  //console.log("Confidence Data:", confidenceData);
-
   // Update the axes
   svg.select(".x-axis").transition().duration(200).call(xAxis);
   svg.select(".y-axis").transition().duration(200).call(yAxis);
@@ -72,4 +70,40 @@ export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confide
 
   // Exit: Remove old lines
   lines.exit().remove();
+
+  // ==== Add Legend ====
+
+  // Select or create the legend group
+  let legendGroup = svg.select(".legend");
+  if (legendGroup.empty()) {
+    legendGroup = svg.append("g").attr("class", "legend");
+  }
+
+  // Bind labels to legend items
+  const legendItems = legendGroup.selectAll(".legend-item")
+    .data(Array.from(groupedData.keys()), d => d); // Use label as the key
+
+  // Enter: Add new legend items
+  const legendEnter = legendItems.enter()
+    .append("g")
+    .attr("class", "legend-item")
+    .attr("transform", (d, i) => `translate(${xScale.range()[0] - 20}, ${20 + i * 20})`); // Position legend items
+
+  legendEnter.append("rect")
+    .attr("width", 12)
+    .attr("height", 12)
+    .attr("fill", d => colorScale(d));
+
+  legendEnter.append("text")
+    .attr("x", 18)
+    .attr("y", 10)
+    .style("font-size", "12px")
+    .text(d => d);
+
+  // Update: Update existing legend items
+  legendItems.select("rect").attr("fill", d => colorScale(d));
+  legendItems.select("text").text(d => d);
+
+  // Exit: Remove old legend items
+  legendItems.exit().remove();
 };
