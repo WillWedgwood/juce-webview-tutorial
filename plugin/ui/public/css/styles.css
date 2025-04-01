@@ -11,10 +11,6 @@ svg {
 }
 
 #toggle-mode-btn {
-  position: absolute;
-  top: 50%; /* Center vertically */
-  left: 20px; /* Adjust the distance from the left edge */
-  transform: translateY(-50%); /* Center vertically relative to its height */
   background-color: rgb(3, 69, 96); /* blue_7 */
   color: white;
   border: none;
@@ -87,4 +83,14 @@ svg {
   margin-bottom: 3px; /* Reduced spacing between labels */
   cursor: pointer;
   font-size: 12px; /* Smaller font size */
+}
+
+/* Logo styling */
+#logo {
+  position: fixed;
+  bottom: 5vh; /* 5% of the viewport height from the bottom */
+  right: 5vw; /* 5% of the viewport width from the right */
+  width: 15vw; /* Logo width is 15% of the viewport width */
+  max-width: 200px; /* Optional: Set a maximum width */
+  height: auto; /* Maintain aspect ratio */
 }

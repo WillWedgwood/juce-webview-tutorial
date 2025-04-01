@@ -131,8 +131,25 @@ window.__JUCE__.backend.addEventListener("outputLevel", () => {
 
 setInterval(() => {
   if (isConfidenceTracking) {
-    updateConfidenceGraph(confidenceGraph.svg, confidenceGraph.xScale, confidenceGraph.yScale, confidenceGraph.xAxis, confidenceGraph.yAxis, confidenceData);
+    updateConfidenceGraph(
+      confidenceGraph.svg,
+      confidenceGraph.xScale,
+      confidenceGraph.yScale,
+      confidenceGraph.xAxis,
+      confidenceGraph.yAxis,
+      confidenceData,
+      removedLabels // Pass the removedLabels array
+    );
   } else {
-    updateClassificationGraph(classificationGraph.svg, classificationGraph.xScale, classificationGraph.yScale, classificationGraph.xAxis, classificationGraph.yAxis, data, labels, removedLabels);
+    updateClassificationGraph(
+      classificationGraph.svg,
+      classificationGraph.xScale,
+      classificationGraph.yScale,
+      classificationGraph.xAxis,
+      classificationGraph.yAxis,
+      data,
+      labels,
+      removedLabels
+    );
   }
 }, 480);

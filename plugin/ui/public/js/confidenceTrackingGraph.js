@@ -32,85 +32,90 @@ export const setupConfidenceGraph = (width, height, margin) => {
   return { svg, xScale, yScale, xAxis, yAxis, xAxisGroup, yAxisGroup };
 };
 
-export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confidenceData) => {
+export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confidenceData, removedLabels) => {
   const now = Date.now();
-  xScale.domain([now - 60000, now]);
+  const oneMinuteAgo = now - 60000;
 
-  // Update the axes smoothly
-  svg.select(".x-axis")
-    .transition()
-    .duration(200)
-    .call(xAxis);
-  
-  svg.select(".y-axis")
-    .transition()
-    .duration(200)
-    .call(yAxis);
+  // Filter the data to include only the last 1 minute and exclude removed labels
+  const filteredData = confidenceData.filter(
+    (d) => d.timestamp >= oneMinuteAgo && !removedLabels.includes(d.label)
+  );
 
-  // Group the data by label
-  const groupedData = d3.group(confidenceData, d => d.label);
+  // Update the x-axis domain to maintain a rolling 1-minute window
+  xScale.domain([oneMinuteAgo, now]);
+
+  // Update the axes
+  svg.select(".x-axis").transition().duration(200).call(xAxis);
+  svg.select(".y-axis").transition().duration(200).call(yAxis);
+
+  // Group the filtered data by label
+  const groupedData = d3.group(filteredData, (d) => d.label);
 
   // Create a color scale for the labels
   const colorScale = d3.scaleOrdinal()
     .domain(Array.from(groupedData.keys()))
-    .range(d3.schemeCategory10); 
+    .range(d3.schemeCategory10);
+
+  // ==== Update Lines ====
 
   // Bind the grouped data to the lines
   const lines = svg.selectAll(".line")
-    .data(Array.from(groupedData), ([label]) => label);
+    .data(Array.from(groupedData), ([label]) => label); // Use label as the key
 
   // Enter: Add new lines
   lines.enter()
     .append("path")
     .attr("class", "line")
     .attr("fill", "none")
-    .attr("stroke", ([label]) => colorScale(label))
+    .attr("stroke", ([label]) => colorScale(label)) // Assign a unique color to each label
     .attr("stroke-width", 2)
-    .merge(lines)
-    .attr("d", ([, values]) => d3.line()
-      .x(d => xScale(d.timestamp))
-      .y(d => yScale(d.value))
-      (values)
-    )
-    .attr("transform", null) // Reset previous transforms
+    .merge(lines) // Merge with existing lines
     .transition()
     .duration(200)
-    .ease(d3.easeLinear)
-    .attr("transform", `translate(${xScale(now - 60000) - xScale(now - 60000 + 200)}, 0)`); // Move left
+    .attr("d", ([, values]) =>
+      d3
+        .line()
+        .x((d) => xScale(d.timestamp))
+        .y((d) => yScale(d.value))(values)
+    );
 
   // Exit: Remove old lines
   lines.exit().remove();
 
-  // ==== Add Legend ====
+  // ==== Update Legend ====
+
+  // Select or create the legend group
   let legendGroup = svg.select(".legend");
   if (legendGroup.empty()) {
     legendGroup = svg.append("g").attr("class", "legend");
   }
 
+  // Bind filtered labels to legend items
   const legendItems = legendGroup.selectAll(".legend-item")
-    .data(Array.from(groupedData.keys()), d => d);
+    .data(Array.from(groupedData.keys()), (d) => d); // Use label as the key
 
+  // Enter: Add new legend items
   const legendEnter = legendItems.enter()
     .append("g")
     .attr("class", "legend-item")
-    .attr("transform", (d, i) => `translate(${xScale.range()[0] - 90}, ${20 + i * 20})`);
+    .attr("transform", (d, i) => `translate(${xScale.range()[0] - 80}, ${20 + i * 20})`);
 
   legendEnter.append("rect")
     .attr("width", 12)
     .attr("height", 12)
-    .attr("fill", d => colorScale(d));
+    .attr("fill", (d) => colorScale(d));
 
-    legendEnter.append("text")
+  legendEnter.append("text")
     .attr("x", 18)
     .attr("y", 10)
     .style("font-size", "10px")
     .style("fill", "white") // Set the text color to white
-    .text(d => d);
+    .text((d) => d);
 
-  legendItems.select("rect").attr("fill", d => colorScale(d));
-  legendItems.select("text")
-  .style("fill", "white") // Set the text color to white
-  .text(d => d);
+  // Update: Update existing legend items
+  legendItems.select("rect").attr("fill", (d) => colorScale(d));
+  legendItems.select("text").text((d) => d);
 
+  // Exit: Remove old legend items
   legendItems.exit().remove();
 };
