@@ -152,4 +152,4 @@ setInterval(() => {
       removedLabels
     );
   }
-}, 480);
+}, 60);

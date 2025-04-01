@@ -32,6 +32,9 @@ export const setupConfidenceGraph = (width, height, margin) => {
   return { svg, xScale, yScale, xAxis, yAxis, xAxisGroup, yAxisGroup };
 };
 
+// Persistent color map to ensure colors remain consistent
+const colorMap = new Map();
+
 export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confidenceData, removedLabels) => {
   const now = Date.now();
   const oneMinuteAgo = now - 60000;
@@ -51,40 +54,44 @@ export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confide
   // Group the filtered data by label
   const groupedData = d3.group(filteredData, (d) => d.label);
 
-  // Create a color scale for the labels
+  // Ensure color consistency by storing a persistent color map
+  const allLabels = Array.from(new Set([...colorMap.keys(), ...groupedData.keys()]));
   const colorScale = d3.scaleOrdinal()
-    .domain(Array.from(groupedData.keys()))
+    .domain(allLabels)
     .range(d3.schemeCategory10);
 
-  // ==== Update Lines ====
+  // Assign colors to labels persistently
+  allLabels.forEach(label => {
+    if (!colorMap.has(label)) {
+      colorMap.set(label, colorScale(label));
+    }
+  });
 
-  // Bind the grouped data to the lines
+  // ==== Update Lines ====
   const lines = svg.selectAll(".line")
-    .data(Array.from(groupedData), ([label]) => label); // Use label as the key
+    .data(Array.from(groupedData), ([label]) => label);
 
   // Enter: Add new lines
   lines.enter()
     .append("path")
     .attr("class", "line")
     .attr("fill", "none")
-    .attr("stroke", ([label]) => colorScale(label)) // Assign a unique color to each label
+    .attr("stroke", ([label]) => colorMap.get(label))
     .attr("stroke-width", 2)
-    .merge(lines) // Merge with existing lines
+    .merge(lines)
     .transition()
     .duration(200)
     .attr("d", ([, values]) =>
-      d3
-        .line()
-        .x((d) => xScale(d.timestamp))
-        .y((d) => yScale(d.value))(values)
+      d3.line()
+        .x(d => xScale(d.timestamp))
+        .y(d => yScale(d.value))
+        (values)
     );
 
   // Exit: Remove old lines
   lines.exit().remove();
 
   // ==== Update Legend ====
-
-  // Select or create the legend group
   let legendGroup = svg.select(".legend");
   if (legendGroup.empty()) {
     legendGroup = svg.append("g").attr("class", "legend");
@@ -97,8 +104,7 @@ export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confide
   // Enter: Add new legend items
   const legendEnter = legendItems.enter()
     .append("g")
-    .attr("class", "legend-item")
-    .attr("transform", (d, i) => `translate(${xScale.range()[0] - 80}, ${20 + i * 20})`);
+    .attr("class", "legend-item");
 
   legendEnter.append("rect")
     .attr("width", 12)
@@ -109,12 +115,21 @@ export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confide
     .attr("x", 18)
     .attr("y", 10)
     .style("font-size", "10px")
-    .style("fill", "white") // Set the text color to white
+    .style("fill", "white")
     .text((d) => d);
 
-  // Update: Update existing legend items
-  legendItems.select("rect").attr("fill", (d) => colorScale(d));
-  legendItems.select("text").text((d) => d);
+  // Update: Ensure all legend items (new + existing) are positioned correctly
+  legendItems.merge(legendEnter)
+    .transition()
+    .duration(200)
+    .attr("transform", (d, i) => `translate(${xScale.range()[0] - 80}, ${20 + i * 20})`);
+
+  // Ensure color is updated correctly
+  legendItems.merge(legendEnter).select("rect")
+    .attr("fill", (d) => colorScale(d));
+
+  legendItems.merge(legendEnter).select("text")
+    .text((d) => d);
 
   // Exit: Remove old legend items
   legendItems.exit().remove();
