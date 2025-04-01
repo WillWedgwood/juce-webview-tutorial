@@ -16,7 +16,7 @@ let isConfidenceTracking = false; // Initial state: Outright Classification
 
 const width = 800;
 const height = 400;
-const margin = { top: 20, right: 100, bottom: 30, left: 50 };
+const margin = { top: 20, right: 100, bottom: 30, left: 100};
 
 let classificationGraph = setupClassificationGraph(width, height, margin, labels);
 //let confidenceGraph = setupConfidenceGraph(width, height, margin);
