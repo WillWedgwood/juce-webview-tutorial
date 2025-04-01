@@ -36,24 +36,40 @@ export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confide
   const now = Date.now();
   xScale.domain([now - 60000, now]);
 
+  //console.log("Confidence Data:", confidenceData);
+
+  // Update the axes
   svg.select(".x-axis").transition().duration(200).call(xAxis);
   svg.select(".y-axis").transition().duration(200).call(yAxis);
 
-  const line = svg.selectAll(".line").data([confidenceData]);
+  // Group the data by label
+  const groupedData = d3.group(confidenceData, d => d.label);
 
-  line.enter()
+  // Create a color scale for the labels
+  const colorScale = d3.scaleOrdinal()
+    .domain(Array.from(groupedData.keys()))
+    .range(d3.schemeCategory10); // Use D3's built-in color scheme
+
+  // Bind the grouped data to the lines
+  const lines = svg.selectAll(".line")
+    .data(Array.from(groupedData), ([label, values]) => label); // Use label as the key
+
+  // Enter: Add new lines
+  lines.enter()
     .append("path")
     .attr("class", "line")
     .attr("fill", "none")
-    .attr("stroke", "blue")
+    .attr("stroke", ([label]) => colorScale(label)) // Assign a unique color to each label
     .attr("stroke-width", 2)
-    .merge(line)
+    .merge(lines) // Merge with existing lines
     .transition()
     .duration(200)
-    .attr("d", d3.line()
+    .attr("d", ([, values]) => d3.line()
       .x(d => xScale(d.timestamp))
       .y(d => yScale(d.value))
+      (values) // Pass the values (data points) for this label
     );
 
-  line.exit().remove();
+  // Exit: Remove old lines
+  lines.exit().remove();
 };
