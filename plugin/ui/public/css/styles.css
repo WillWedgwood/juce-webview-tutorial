@@ -23,3 +23,68 @@ svg {
   font-size: 14px;
   border-radius: 5px;
 }
+
+/* Container for buttons */
+.button-container {
+  display: flex;
+  justify-content: center; /* Center the buttons horizontally */
+  gap: 10px; /* Add spacing between the buttons */
+  margin-top: 20px; /* Add some space above the buttons */
+}
+
+/* Dropdown container */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown button */
+.dropdown-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Dropdown menu container */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: rgb(3, 37, 65); /* Default blue shade */
+  min-width: 150px; /* Reduced width */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Slightly smaller shadow */
+  z-index: 1;
+  padding: 5px; /* Reduced padding */
+  border-radius: 5px; /* Optional: Rounded corners */
+}
+
+/* Dropdown menu items */
+.dropdown-item {
+  padding: 6px 8px; /* Reduced padding for items */
+  color: white; /* Text color */
+  cursor: pointer;
+  background-color: rgb(3, 37, 65); /* Default blue shade */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  font-size: 12px; /* Smaller font size */
+}
+
+/* Hover effect for dropdown items */
+.dropdown-item:hover {
+  background-color: rgb(2, 46, 64); /* Lighter blue shade */
+}
+
+/* Show the dropdown menu when the button is hovered */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Checkbox labels */
+.dropdown-menu label {
+  display: block;
+  margin-bottom: 3px; /* Reduced spacing between labels */
+  cursor: pointer;
+  font-size: 12px; /* Smaller font size */
+}

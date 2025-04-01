@@ -19,10 +19,59 @@ const height = 400;
 const margin = { top: 20, right: 100, bottom: 30, left: 100};
 
 let classificationGraph = setupClassificationGraph(width, height, margin, labels);
-//let confidenceGraph = setupConfidenceGraph(width, height, margin);
 let confidenceGraph = null; // Will be initialized when toggled
 
 let currentGraph = classificationGraph;
+
+// Populate the dropdown with classification labels
+const dropdownMenu = document.getElementById("dropdown-menu");
+
+labels.forEach((label) => {
+  // Create a container for each checkbox and label
+  const checkboxContainer = document.createElement("div");
+  checkboxContainer.className = "dropdown-item";
+
+  // Create the checkbox input
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.id = `checkbox-${label}`;
+  checkbox.checked = !removedLabels.includes(label); // Check if the label is not in removedLabels
+  checkbox.addEventListener("change", (event) => {
+    if (event.target.checked) {
+      // Remove the label from removedLabels
+      removedLabels = removedLabels.filter((removedLabel) => removedLabel !== label);
+    } else {
+      // Add the label to removedLabels
+      removedLabels.push(label);
+    }
+
+    // Update the graph dynamically
+    if (!isConfidenceTracking) {
+      updateClassificationGraph(
+        classificationGraph.svg,
+        classificationGraph.xScale,
+        classificationGraph.yScale,
+        classificationGraph.xAxis,
+        classificationGraph.yAxis,
+        data,
+        labels,
+        removedLabels
+      );
+    }
+  });
+
+  // Create the label for the checkbox
+  const labelElement = document.createElement("label");
+  labelElement.htmlFor = `checkbox-${label}`;
+  labelElement.textContent = label;
+
+  // Append the checkbox and label to the container
+  checkboxContainer.appendChild(checkbox);
+  checkboxContainer.appendChild(labelElement);
+
+  // Append the container to the dropdown menu
+  dropdownMenu.appendChild(checkboxContainer);
+});
 
 // Add event listener to toggle button
 const toggleButton = document.getElementById("toggle-mode-btn");
