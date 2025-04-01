@@ -73,20 +73,19 @@ export const updateConfidenceGraph = (svg, xScale, yScale, xAxis, yAxis, confide
 
   // Enter: Add new lines
   lines.enter()
-    .append("path")
-    .attr("class", "line")
-    .attr("fill", "none")
-    .attr("stroke", ([label]) => colorMap.get(label))
-    .attr("stroke-width", 2)
-    .merge(lines)
-    .transition()
-    .duration(200)
-    .attr("d", ([, values]) =>
-      d3.line()
-        .x(d => xScale(d.timestamp))
-        .y(d => yScale(d.value))
-        (values)
-    );
+  .append("path")
+  .attr("class", "line")
+  .attr("fill", "none")
+  .attr("stroke", ([label]) => colorMap.get(label))
+  .attr("stroke-width", 2)
+  .merge(lines)
+  .attr("transform", null) // Reset previous transforms
+  .attr("d", ([, values]) =>
+    d3.line()
+      .x(d => xScale(d.timestamp))
+      .y(d => yScale(d.value))
+      (values)
+  );
 
   // Exit: Remove old lines
   lines.exit().remove();
