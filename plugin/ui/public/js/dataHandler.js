@@ -1,5 +1,7 @@
 import { ClassificationLabels } from "./constants.js";
 
+
+// ==== Classification Data Handling ==== //
 export const addClassification = (label, data, labels, removedLabels) => {
   if (!label || removedLabels.includes(label)) {
     console.log(`Skipping classification: ${label || "Unmatched"}`);
@@ -49,41 +51,50 @@ export function mapValueToClassification(value) {
     return null;
 };
 
-export const updateGraph = (svg, xScale, yScale, xAxis, yAxis, data, labels, removedLabels) => {
-  if (!svg || !xScale || !yScale || !xAxis || !yAxis) {
-    console.error("Graph setup is incomplete. Ensure setupGraph is called correctly.");
-    return;
-    }
+// ==== Confidence Tracking Mode ==== //
+// Store historical confidence data (global variable)
+let confidenceHistory = [];
+
+export const convertScoresToConfidence = (scores) => {
+  if (!scores || scores.length === 0) {
+    console.error("Invalid or empty scores array.");
+    return [];
+  }
+
+  const windNoiseIndices = [36, 40, 190, 277, 278, 279, 453];
+  const rainNoiseIndices = [282, 283, 284, 285, 286, 438, 439, 442, 443, 444, 445, 446, 447];
+  const signalNoiseMap = new Map([
+    [494, ClassificationLabels.SILENCE],
+    [506, ClassificationLabels.ECHO],
+    [509, ClassificationLabels.STATIC],
+    [511, ClassificationLabels.DISTORTION],
+    [514, ClassificationLabels.WHITE_NOISE],
+    [515, ClassificationLabels.PINK_NOISE]
+  ]);
+
+  const getHighestScore = (indices) => Math.max(...indices.map(index => scores[index] || 0));
+  const clampValue = (value) => Math.max(-3, Math.min(3, value));
+  const roundValue = (value) => parseFloat(value.toFixed(3)); // Round to 3 decimal places
 
   const now = Date.now();
-  xScale.domain([now - 60000, now]);
 
-  svg.select(".x-axis")
-    .transition()
-    .duration(200)
-    .call(xAxis);
+  const newConfidenceData = [
+    { timestamp: now, label: ClassificationLabels.WIND, value: roundValue(clampValue(getHighestScore(windNoiseIndices))) },
+    { timestamp: now, label: ClassificationLabels.RAIN, value: roundValue(clampValue(getHighestScore(rainNoiseIndices))) },
+    ...Array.from(signalNoiseMap, ([index, label]) => ({
+      timestamp: now,
+      label,
+      value: roundValue(clampValue(scores[index] || 0))
+    }))
+  ];
 
-  yScale.domain(labels.filter(label => !removedLabels.includes(label)));
+  // Append new data to history
+  confidenceHistory.push(...newConfidenceData);
 
-  svg.select(".y-axis")
-    .transition()
-    .duration(200)
-    .call(yAxis);
+  // Filter history to keep only the last 60 seconds
+  confidenceHistory = confidenceHistory.filter(d => d.timestamp > now - 60000);
 
-  const circles = svg.selectAll("circle")
-    .data(data.filter(d => !removedLabels.includes(d.label)), d => d.id);
+  console.log("Updated Confidence History:", confidenceHistory);
 
-  circles.enter()
-    .append("circle")
-    .attr("cx", d => xScale(d.timestamp))
-    .attr("cy", d => yScale(d.label) + yScale.bandwidth() / 2)
-    .attr("r", 8)
-    .attr("fill", "red")
-    .merge(circles)
-    .transition()
-    .duration(200)
-    .attr("cx", d => xScale(d.timestamp))
-    .attr("cy", d => yScale(d.label) + yScale.bandwidth() / 2);
-
-  circles.exit().remove();
+  return confidenceHistory;
 };

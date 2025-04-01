@@ -9,3 +9,17 @@ svg {
   margin: 20px auto;
   background-color: #f9f9f9;
 }
+
+#toggle-mode-btn {
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 20px; /* Adjust the distance from the left edge */
+  transform: translateY(-50%); /* Center vertically relative to its height */
+  background-color: rgb(3, 69, 96); /* blue_7 */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+}
