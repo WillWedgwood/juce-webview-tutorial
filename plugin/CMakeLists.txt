@@ -142,3 +142,16 @@ target_compile_options(${PROJECT_NAME}
         -Wno-sign-conversion
         -Wno-c++98-compat-extra-semi
 )
+
+add_custom_command(
+    TARGET "${PROJECT_NAME}_VST3"
+    POST_BUILD
+    COMMAND /bin/bash ${CMAKE_SOURCE_DIR}/post_build.sh
+    ARGS
+        "BUILT_PRODUCTS_DIR=$<TARGET_FILE_DIR:${PROJECT_NAME}_VST3>"
+        "PROJECT_DIR=${CMAKE_SOURCE_DIR}"
+        "TARGETNAME=${PROJECT_NAME}_VST3"
+        "LIBSAMPLERATE_DIR=${CMAKE_SOURCE_DIR}/External_Libs/arm64/libsamplerate"
+        "ONNX_DIR=${CMAKE_SOURCE_DIR}/External_Libs/onnxruntime-osx-universal2-1.18.1"
+    COMMENT "Executing post-build script for ${PROJECT_NAME} - VST3"
+)

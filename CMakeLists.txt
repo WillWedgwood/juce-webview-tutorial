@@ -61,4 +61,3 @@ endif()
 
 # Adds all the targets configured in the "plugin" folder.
 add_subdirectory(plugin)
-
