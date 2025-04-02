@@ -26,26 +26,28 @@ export function mapValueToClassification(value) {
       [514, ClassificationLabels.WHITE_NOISE], // White noise detected
       [515, ClassificationLabels.PINK_NOISE]  // Pink noise detected
     ]);
+
+    console.log("Received value:", value);
   
     // Check for wind noise
     if (windNoiseIndices.has(value)) {
       console.log("Mapping value to Wind");
       return ClassificationLabels.WIND;
     }
-  
+
     // Check for rain noise
     if (rainNoiseIndices.has(value)) {
       console.log("Mapping value to Rain");
       return ClassificationLabels.RAIN;
     }
-  
+
     // Check for specific signal noise
     if (signalNoiseMap.has(value)) {
       const mappedLabel = signalNoiseMap.get(value);
       console.log(`Mapping value ${value} to ${mappedLabel}`);
       return mappedLabel;
     }
-  
+
     // If no match, return null
     console.log(`Value ${value} does not match any classification.`);
     return null;
@@ -72,8 +74,12 @@ export const convertScoresToConfidence = (scores) => {
     [515, ClassificationLabels.PINK_NOISE]
   ]);
 
+  // Log the index of the maximum score
+  const maxIndex = scores.reduce((maxIdx, score, idx) => (score > scores[maxIdx] ? idx : maxIdx), 0);
+  console.log("Max index of scores:", maxIndex, "with value:", scores[maxIndex]);
+
   const getHighestScore = (indices) => Math.max(...indices.map(index => scores[index] || 0));
-  const clampValue = (value) => Math.max(-3, Math.min(3, value));
+  const clampValue = (value) => Math.max(0, Math.min(1, value));
   const roundValue = (value) => parseFloat(value.toFixed(3)); // Round to 3 decimal places
 
   const now = Date.now();

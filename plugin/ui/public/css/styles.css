@@ -1,3 +1,21 @@
+/* Define the color palette as CSS variables */
+:root {
+  --blue-0: rgb(162, 229, 255);
+  --blue-1: rgb(95, 191, 246);
+  --blue-2: rgb(43, 194, 252);
+  --blue-3: rgb(7, 186, 255);
+  --blue-4: rgb(0, 173, 255);
+  --blue-5: rgb(0, 120, 166);
+  --blue-6: rgb(0, 93, 129);
+  --blue-7: rgb(3, 69, 96);
+  --blue-8: rgb(2, 46, 64);
+  --blue-9: rgb(1, 23, 32);
+  --orange: rgb(255, 179, 0);
+  --comp-blue: rgb(0, 45, 228);
+  --red: rgb(255, 35, 0);
+  --green: rgb(0, 149, 55);
+}
+
 body {
   font-family: Arial, sans-serif;
   text-align: center;
@@ -11,7 +29,7 @@ svg {
 }
 
 #toggle-mode-btn {
-  background-color: rgb(3, 69, 96); /* blue_7 */
+  background-color: var(--blue-6); /* Use the blue-6 color */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -88,9 +106,9 @@ svg {
 /* Logo styling */
 #logo {
   position: fixed;
-  bottom: 5vh; /* 5% of the viewport height from the bottom */
-  right: 5vw; /* 5% of the viewport width from the right */
-  width: 15vw; /* Logo width is 15% of the viewport width */
+  top: 3vh; /* 3% of the viewport height from the top */
+  right: 2vw; /* 2% of the viewport width from the right */
+  width: 12vw; /* Logo width is 12% of the viewport width */
   max-width: 200px; /* Optional: Set a maximum width */
   height: auto; /* Maintain aspect ratio */
 }

@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classification Graph</title>
+    <title>Audio Classification</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
-            background-color: rgb(0, 93, 129); /* blue_6 */
+            background-color: var(--blue-7); /* blue_7 */
             color: rgb(249, 241, 241); /* Text color */
         }
         #graph {
@@ -21,7 +21,7 @@
             fill: rgb(253, 233, 233); /* Text color */
         }
         #add-classification-btn {
-            background-color: rgb(3, 69, 96); /* blue_7 */
+            background-color:var(--blue-6); /* blue_6 */
             color: white;
             border: none;
             padding: 10px;
@@ -31,7 +31,7 @@
             background-color: rgb(2, 46, 64); /* blue_8 */
         }
         #classification-dropdown {
-            background-color: rgb(3, 69, 96); /* blue_7 */
+            background-color: var(--blue-6); /* blue_6 */
             color: white;
         }
         .dropdown-item {
@@ -52,7 +52,7 @@
     </style>
 </head>
 <body>
-    <h1>Real-Time Classification Graph</h1>
+    <h1>Audio Classification</h1>
     <svg id="graph"></svg>
 
     <div class="button-container">

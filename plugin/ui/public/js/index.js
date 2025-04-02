@@ -16,7 +16,7 @@ let isConfidenceTracking = false; // Initial state: Outright Classification
 
 const width = 800;
 const height = 400;
-const margin = { top: 20, right: 100, bottom: 30, left: 100};
+const margin = { top: 20, right: 100, bottom: 30, left: 100 };
 
 let classificationGraph = setupClassificationGraph(width, height, margin, labels);
 let confidenceGraph = null; // Will be initialized when toggled
@@ -121,7 +121,7 @@ window.__JUCE__.backend.addEventListener("outputLevel", () => {
 
       // ==== Confidence Data Handling ==== //
       const scores = levelData.scores;
-      //console.log("Received value of 'scores':", scores);
+      console.log("Received value of 'scores':", scores);
 
       // Convert scores to confidence values
       confidenceData = convertScoresToConfidence(scores);

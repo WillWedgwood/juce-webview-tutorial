@@ -35,12 +35,13 @@ public:
     
     std::atomic<int> maxIndex; // Thread-safe shared state
     std::vector<int> indicesAboveThreshold;
-    std::span<float> output;
+
+    std::vector<float> getOutputScores() const;
     
     void prepareToPlay(const double sampleRate, const int samplesPerBlock, const int detectionFrequency);
     
     void processSample(const float sample);
-    std::span<float> processClassification(std::span<float> stft_input);
+    void processClassification(std::span<float> stft_input);
     void indexClassification(int maxIndex, bool wind, bool rain, bool signal);
 
     void testONNXRuntime();
@@ -58,6 +59,9 @@ private:
     std::vector<float> outputFifo;  // Buffer for processing
     
     std::vector<float> classifierBuffer; // Buffer for processing
+
+    //std::array<float, 521> output_0; // Member container for output of classification model.
+    std::vector<float> output_0;  // Size based on expected output
     
     Ort::Env env;
     Ort::Session onnxSession;
@@ -66,4 +70,6 @@ private:
     Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
     juce::File modelFile;
+
+    //std::atomic_flag outputLock = ATOMIC_FLAG_INIT; // Spinlock for output_0
 };

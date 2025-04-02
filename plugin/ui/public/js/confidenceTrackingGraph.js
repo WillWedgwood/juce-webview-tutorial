@@ -8,7 +8,7 @@ export const setupConfidenceGraph = (width, height, margin) => {
     .range([margin.left, width - margin.right]);
 
   const yScale = d3.scaleLinear()
-    .domain([-3, 3])
+    .domain([0, 1])
     .range([height - margin.bottom, margin.top]);
 
   const xAxis = d3.axisBottom(xScale).ticks(5).tickFormat(d3.timeFormat("%H:%M:%S"));

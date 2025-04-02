@@ -57,7 +57,8 @@ void AudioClassification::prepareToPlay(const double sampleRate, const int sampl
     float resampleRatio = sampleRate / targetSRC;
     
     classifierBuffer.resize(classifierBufferSize);
-    
+    output_0.resize(521); // Resize output_0 to match the expected size
+
     fifoSize = static_cast<int>(std::round(classifierBufferSize * resampleRatio));
 
     // Ensure fifoSize is even by rounding up if it's odd
@@ -104,18 +105,18 @@ void AudioClassification::processSample(const float sample)
         SRC.interpolateAudio(outputFifoSpan, classifierBufferSpan);
 
         // Perform classification
-        output = processClassification(classifierBufferSpan);
+        processClassification(classifierBufferSpan);
 
-        maxIndex = static_cast<int>(std::distance(output.begin(), std::max_element(output.begin(), output.end())));
+        maxIndex = static_cast<int>(std::distance(output_0.begin(), std::max_element(output_0.begin(), output_0.end())));
         DBG("Max index: " << maxIndex);
         
         // ======== Output Above Threshold =================
         float threshold = 0.5f; // Example threshold value
 
         // Vector to store indices of values greater than the threshold
-        for (int i = 0; i < output.size(); ++i)
+        for (int i = 0; i < output_0.size(); ++i)
         {
-            if (output[i] > threshold) // Check if value is above threshold
+            if (output_0[i] > threshold) // Check if value is above threshold
             {
                 indicesAboveThreshold.push_back(i); // Store the index
             }
@@ -129,13 +130,12 @@ void AudioClassification::processSample(const float sample)
 
     }
 }
-std::span<float> AudioClassification::processClassification(std::span<float> waveform)
-{
+void AudioClassification::processClassification(std::span<float> waveform) {
     // Model input/output names
     const char* inputName[] = {"waveform"};
     const char* outputNames[] = {"output_0", "output_1", "output_2"};
-    
-    // vector shapes
+
+    // Vector shapes
     std::vector<int64_t> waveform_shape = {15360};
     std::vector<int64_t> output_0_shape = {1, 521};
     std::vector<int64_t> output_1_shape = {1, 1024};
@@ -144,9 +144,8 @@ std::span<float> AudioClassification::processClassification(std::span<float> wav
     // Create input tensors
     std::vector<Ort::Value> input_tensors;
     input_tensors.emplace_back(Ort::Value::CreateTensor<float>(memory_info, waveform.data(), waveform.size(), waveform_shape.data(), 1));
-    
+
     // Output placeholders
-    std::vector<float> output_0(1 * 521);  // Size based on expected output
     std::vector<float> output_1(1 * 1024);  // Size based on expected output
     std::vector<float> output_2(96 * 64);  // Size based on expected output
 
@@ -158,8 +157,23 @@ std::span<float> AudioClassification::processClassification(std::span<float> wav
     // Perform inference
     onnxSession.Run(Ort::RunOptions{nullptr}, inputName, input_tensors.data(), input_tensors.size(), outputNames, output_tensors.data(), output_tensors.size());
 
+    // // Release the lock after updating output_0
+    // outputLock.clear(std::memory_order_release);
+}
+
+std::vector<float> AudioClassification::getOutputScores() const {
+    // Wait until the lock is available
+    // while (outputLock.test_and_set(std::memory_order_acquire)) {
+    //     // Spin until the lock is released
+    // }
+
+    // Return the output_0 data
+    //auto span = std::span<float>(output_0); // Directly construct span from std::vector
+
     return output_0;
 }
+
+// =====  Function to test ONNX Runtime initialization ======
 
 void AudioClassification::testONNXRuntime() {
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "Test");
