@@ -148,7 +148,7 @@ add_custom_command(
     POST_BUILD
     COMMAND /bin/bash ${CMAKE_SOURCE_DIR}/post_build.sh
     ARGS
-        "BUILT_PRODUCTS_DIR=$<TARGET_FILE_DIR:${PROJECT_NAME}_VST3>"
+        "BUILT_PRODUCTS_DIR=$<TARGET_BUNDLE_DIR:${PROJECT_NAME}_VST3>"
         "PROJECT_DIR=${CMAKE_SOURCE_DIR}"
         "TARGETNAME=${PROJECT_NAME}_VST3"
         "LIBSAMPLERATE_DIR=${CMAKE_SOURCE_DIR}/External_Libs/arm64/libsamplerate"

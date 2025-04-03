@@ -15,6 +15,7 @@
 #include "AQUA/SampleRateConversion.h"
 
 SampleRateConversion::SampleRateConversion()
+    : resampleState(nullptr), resampleError(0), resampleRatio(1.0)
 {
 }
 
