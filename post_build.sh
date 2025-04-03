@@ -49,7 +49,7 @@ if [ "$TARGETNAME" = "AQUA_VST3" ]; then
 
     # Update library paths with install_name_tool
     install_name_tool -change \
-        "/Users/will_salsa/Documents/GitHub/Speech_CleanUp_PlugIn/External_Libs/arm64/libsamplerate/build/lib/libsamplerate.0.dylib" \
+        "/Users/will_salsa/Documents/GitHub/Speech_CleanUp_PlugIn/External_Libs/x86/libsamplerate/build/lib/libsamplerate.0.dylib" \
         "@loader_path/libsamplerate/libsamplerate.0.dylib" \
         "$EXECUTABLE_DIRECTORY/AQUA"
 
@@ -61,7 +61,7 @@ if [ "$TARGETNAME" = "AQUA_VST3" ]; then
     # Remove unwanted RPATH entries
     for rpath in \
         "/Users/will_salsa/Documents/GitHub/AQUA/AQUA/External_Libs/onnxruntime-osx-universal2-1.18.1/lib" \
-        "/Users/will_salsa/Documents/GitHub/AQUA/AQUA/External_Libs/arm64/libsamplerate/build/lib" \
+        "/Users/will_salsa/Documents/GitHub/AQUA/AQUA/External_Libs/x86/libsamplerate/build/lib" \
         "/Users/will_salsa/Documents/GitHub/AQUA/AQUA/plugin/../External_Libs/onnxruntime-osx-universal2-1.18.1/lib"; do
         if otool -l "$EXECUTABLE_DIRECTORY/AQUA" | grep -q "$rpath"; then
             install_name_tool -delete_rpath "$rpath" "$EXECUTABLE_DIRECTORY/AQUA"

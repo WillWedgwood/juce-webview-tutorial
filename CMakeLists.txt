@@ -30,13 +30,13 @@ CPMAddPackage(
 # Add include directories for the external libraries
 include_directories(
     ${PROJECT_SOURCE_DIR}/External_Libs/onnxruntime-osx-universal2-1.18.1/include
-    ${PROJECT_SOURCE_DIR}/External_Libs/arm64/libsamplerate/build/include
+    ${PROJECT_SOURCE_DIR}/External_Libs/x86/libsamplerate/build/include
 )
 
 # Add library search paths
 link_directories(
     ${PROJECT_SOURCE_DIR}/External_Libs/onnxruntime-osx-universal2-1.18.1/lib
-    ${PROJECT_SOURCE_DIR}/External_Libs/arm64/libsamplerate/build/lib
+    ${PROJECT_SOURCE_DIR}/External_Libs/x86/libsamplerate/build/lib
 )
 
 # Install Microsoft.Web.WebView2 NuGet package to allow WebViews on Windows

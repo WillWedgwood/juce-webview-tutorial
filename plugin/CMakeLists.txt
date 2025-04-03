@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.22)
 project(AQUA VERSION 0.1.0)
 
 # Specify the target architecture(s)
-set(CMAKE_OSX_ARCHITECTURES "arm64") # Universal binary for Apple Silicon and Intel
+set(CMAKE_OSX_ARCHITECTURES "x86_64") # Universal binary for Apple Silicon and Intel
 
 # Adds a plugin target (that's basically what the Projucer does).
 juce_add_plugin(${PROJECT_NAME}
@@ -108,7 +108,7 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_dsp
         ${JUCE_MODULES}
         ${PROJECT_SOURCE_DIR}/../External_Libs/onnxruntime-osx-universal2-1.18.1/lib/libonnxruntime.1.18.1.dylib
-        ${PROJECT_SOURCE_DIR}/../External_Libs/arm64/libsamplerate/build/lib/libsamplerate.0.dylib
+        ${PROJECT_SOURCE_DIR}/../External_Libs/x86/libsamplerate/build/lib/libsamplerate.0.dylib
         WebViewFiles
     PUBLIC
         juce::juce_recommended_config_flags
@@ -151,7 +151,7 @@ add_custom_command(
         "BUILT_PRODUCTS_DIR=$<TARGET_BUNDLE_DIR:${PROJECT_NAME}_VST3>"
         "PROJECT_DIR=${CMAKE_SOURCE_DIR}"
         "TARGETNAME=${PROJECT_NAME}_VST3"
-        "LIBSAMPLERATE_DIR=${CMAKE_SOURCE_DIR}/External_Libs/arm64/libsamplerate"
+        "LIBSAMPLERATE_DIR=${CMAKE_SOURCE_DIR}/External_Libs/x86/libsamplerate"
         "ONNX_DIR=${CMAKE_SOURCE_DIR}/External_Libs/onnxruntime-osx-universal2-1.18.1"
     COMMENT "Executing post-build script for ${PROJECT_NAME} - VST3"
 )
