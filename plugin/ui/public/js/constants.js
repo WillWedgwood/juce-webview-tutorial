@@ -1,12 +1,18 @@
 export const ClassificationLabels = {
   RAIN: "Rain",
   WIND: "Wind",
+  CROWD: "Crowd",
+  SPEECH: "Speech",
+  SHOUT: "Shout",
+  MUSIC: "Music (Tannoy)",
   SILENCE: "Silence",
   ECHO: "Echo",
   STATIC: "Static",
   DISTORTION: "Distortion",
   WHITE_NOISE: "White Noise",
   PINK_NOISE: "Pink Noise",
+  SINE_WAVE: "Sine Wave",
+  HUM: "Hum"
 };
 
 export const ColourPalette = {
