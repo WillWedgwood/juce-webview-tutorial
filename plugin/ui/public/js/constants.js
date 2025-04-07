@@ -15,6 +15,23 @@ export const ClassificationLabels = {
   HUM: "Hum"
 };
 
+export const ClassificationIndices = {
+  [ClassificationLabels.RAIN]: [282, 283, 284, 285, 286, 438, 439, 442, 443, 444, 445, 446],
+  [ClassificationLabels.WIND]: [36, 40, 190, 277, 278, 279, 453],
+  [ClassificationLabels.CROWD]: [27, 61, 62, 64],
+  [ClassificationLabels.SPEECH]: [0, 1, 2, 3, 4],
+  [ClassificationLabels.SHOUT]: [6, 7, 9, 11],
+  [ClassificationLabels.MUSIC]: [132],
+  [ClassificationLabels.SILENCE]: [494],
+  [ClassificationLabels.ECHO]: [506],
+  [ClassificationLabels.STATIC]: [509],
+  [ClassificationLabels.DISTORTION]: [511],
+  [ClassificationLabels.WHITE_NOISE]: [514],
+  [ClassificationLabels.PINK_NOISE]: [515],
+  [ClassificationLabels.SINE_WAVE]: [495],
+  [ClassificationLabels.HUM]: [510]
+};
+
 export const ColourPalette = {
   blue_0: "rgb(162, 229, 255)",
   blue_1: "rgb(95, 191, 246)",
