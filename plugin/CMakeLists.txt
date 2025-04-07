@@ -1,90 +1,25 @@
 cmake_minimum_required(VERSION 3.22)
-
-# Version is needed by JUCE.
 project(AQUA VERSION 0.1.0)
 
-# Specify the target architecture(s)
-set(CMAKE_OSX_ARCHITECTURES "x86_64") # Universal binary for Apple Silicon and Intel
+# Set up architecture for macOS builds
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64") # or "arm64;x86_64" for universal binary
 
-# Adds a plugin target (that's basically what the Projucer does).
+# ==== JUCE Plugin Setup ====
 juce_add_plugin(${PROJECT_NAME}
-    COMPANY_NAME SalsaSound
-    IS_SYNTH FALSE
-    NEEDS_MIDI_INPUT FALSE
-    NEEDS_MIDI_OUTPUT FALSE
+    COMPANY_NAME          SalsaSound
+    IS_SYNTH              FALSE
+    NEEDS_MIDI_INPUT      FALSE
+    NEEDS_MIDI_OUTPUT     FALSE
     PLUGIN_MANUFACTURER_CODE WFSD
-    PLUGIN_CODE JWVT
-    FORMATS AU VST3 Standalone
-    PRODUCT_NAME "AQUA"
-    # This will force JUCE to look for the WebView2 NuGet package on Windows
-    NEEDS_WEBVIEW2 TRUE
+    PLUGIN_CODE           JWVT
+    FORMATS               AU VST3 Standalone
+    PRODUCT_NAME          "AQUA"
+    NEEDS_WEBVIEW2        TRUE
 )
 
-# Generate the JuceHeader.h file for this project
 juce_generate_juce_header(${PROJECT_NAME})
 
-get_target_property(PRODUCT_NAME ${PROJECT_NAME} JUCE_PRODUCT_NAME)
-get_target_property(COMPANY_NAME ${PROJECT_NAME} JUCE_COMPANY_NAME)
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-  JUCE_PRODUCT_NAME="${PRODUCT_NAME}"
-  JUCE_COMPANY_NAME="${COMPANY_NAME}"
-  JUCE_PRODUCT_VERSION="${PROJECT_VERSION}")
-
-# Automatically collect all .cpp and .h files in the source and include directories
-file(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
-file(GLOB HEADER_FILES ${INCLUDE_DIR}/*.h)
-
-# Sets the source files of the plugin project
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        ${SOURCE_FILES}
-        ${HEADER_FILES} # Optional: Include headers for IDE organization
-)
-
-# Adding a directory with the library/application name as a subfolder of the
-# include folder is a good practice. It helps avoid name clashes later on.
-set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/AQUA")
-
-# Sets the include directories of the plugin project
-target_include_directories(${PROJECT_NAME}
-    PRIVATE
-        ${JUCE_SOURCE_DIR}/modules
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-# Mark JUCE headers as system headers to suppress warnings in them
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${JUCE_MODULES_DIR})
-
-# Folder where web UI data reside
-set(WEBVIEW_FILES_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ui/public")
-
-# Copy JUCE frontend library to plugin UI files
-file(COPY "${JUCE_MODULES_DIR}/juce_gui_extra/native/javascript/" DESTINATION "${WEBVIEW_FILES_SOURCE_DIR}/js/juce/")
-
-# Zip WebView files
-set(WEBVIEW_FILES_ZIP_NAME "webview_files.zip")
-set(TARGET_WEBVIEW_FILES_ZIP_PATH "${CMAKE_BINARY_DIR}/${WEBVIEW_FILES_ZIP_NAME}")
-get_filename_component(PUBLIC_PATH "${WEBVIEW_FILES_SOURCE_DIR}" ABSOLUTE)
-file(
-  ARCHIVE_CREATE
-  OUTPUT
-  "${TARGET_WEBVIEW_FILES_ZIP_PATH}"
-  PATHS
-  "${PUBLIC_PATH}"
-  FORMAT
-  zip
-  VERBOSE
-)
-
-# Package web UI sources as binary data
-juce_add_binary_data(WebViewFiles
-    HEADER_NAME WebViewFiles.h
-    NAMESPACE webview_files
-    SOURCES ${TARGET_WEBVIEW_FILES_ZIP_PATH}
-)
-
-# List of JUCE modules found in your project
+# ==== JUCE Modules ====
 set(JUCE_MODULES
     juce_audio_basics
     juce_audio_devices
@@ -100,41 +35,101 @@ set(JUCE_MODULES
     juce_gui_extra
 )
 
-# Links to all necessary dependencies. The present ones are recommended by JUCE.
-# If you use one of the additional modules, like the DSP module, you need to specify it here.
+# ==== Include and Source Files ====
+set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/AQUA")
+file(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
+file(GLOB HEADER_FILES ${INCLUDE_DIR}/*.h)
+
+target_sources(${PROJECT_NAME}
+    PRIVATE ${SOURCE_FILES} ${HEADER_FILES}
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${INCLUDE_DIR}
+        ${JUCE_SOURCE_DIR}/modules
+       # ${PROJECT_SOURCE_DIR}/../External_Libs/libsamplerate/universal/include  # Add this line
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    SYSTEM PUBLIC
+        ${JUCE_MODULES_DIR}
+)
+
+# ==== Product Info ====
+get_target_property(PRODUCT_NAME ${PROJECT_NAME} JUCE_PRODUCT_NAME)
+get_target_property(COMPANY_NAME ${PROJECT_NAME} JUCE_COMPANY_NAME)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    JUCE_PRODUCT_NAME="${PRODUCT_NAME}"
+    JUCE_COMPANY_NAME="${COMPANY_NAME}"
+    JUCE_PRODUCT_VERSION="${PROJECT_VERSION}"
+)
+
+# ==== WebView UI Setup ====
+set(WEBVIEW_FILES_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ui/public")
+file(COPY "${JUCE_MODULES_DIR}/juce_gui_extra/native/javascript/"
+     DESTINATION "${WEBVIEW_FILES_SOURCE_DIR}/js/juce/")
+
+set(WEBVIEW_FILES_ZIP_NAME "webview_files.zip")
+set(TARGET_WEBVIEW_FILES_ZIP_PATH "${CMAKE_BINARY_DIR}/${WEBVIEW_FILES_ZIP_NAME}")
+file(ARCHIVE_CREATE
+    OUTPUT "${TARGET_WEBVIEW_FILES_ZIP_PATH}"
+    PATHS "${WEBVIEW_FILES_SOURCE_DIR}"
+    FORMAT zip
+    VERBOSE
+)
+
+juce_add_binary_data(WebViewFiles
+    HEADER_NAME WebViewFiles.h
+    NAMESPACE webview_files
+    SOURCES ${TARGET_WEBVIEW_FILES_ZIP_PATH}
+)
+
+# ==== External Dependencies ====
+
+## libsamplerate
+set(LIBSAMPLERATE_X86 "${PROJECT_SOURCE_DIR}/../External_Libs/libsamplerate/x86/libsamplerate/build/lib/libsamplerate.0.dylib")
+set(LIBSAMPLERATE_ARM64 "${PROJECT_SOURCE_DIR}/../External_Libs/libsamplerate/arm64/libsamplerate/build/lib/libsamplerate.0.dylib")
+set(LIBSAMPLERATE_UNIVERSAL "${PROJECT_SOURCE_DIR}/../External_Libs/libsamplerate/universal/lib/libsamplerate.0.dylib")
+
+add_custom_command(
+    OUTPUT ${LIBSAMPLERATE_UNIVERSAL}
+    COMMAND ${CMAKE_COMMAND} -E echo "🔨 Creating universal libsamplerate..."
+    COMMAND ${CMAKE_SOURCE_DIR}/scripts/create_universal_libsamplerate.sh
+        ${LIBSAMPLERATE_X86}
+        ${LIBSAMPLERATE_ARM64}
+        ${LIBSAMPLERATE_UNIVERSAL}
+    DEPENDS ${LIBSAMPLERATE_X86} ${LIBSAMPLERATE_ARM64}
+    COMMENT "🏗️  Combining libsamplerate x86 and arm64 into universal binary"
+)
+
+add_custom_target(libsamplerate_universal ALL DEPENDS ${LIBSAMPLERATE_UNIVERSAL})
+add_dependencies(${PROJECT_NAME} libsamplerate_universal)
+
+# ==== Link Libraries ====
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
+        ${JUCE_MODULES}
         juce::juce_audio_utils
         juce::juce_dsp
-        ${JUCE_MODULES}
-        ${PROJECT_SOURCE_DIR}/../External_Libs/onnxruntime-osx-universal2-1.18.1/lib/libonnxruntime.1.18.1.dylib
-        ${PROJECT_SOURCE_DIR}/../External_Libs/x86/libsamplerate/build/lib/libsamplerate.0.dylib
         WebViewFiles
+        ${PROJECT_SOURCE_DIR}/../External_Libs/onnxruntime-osx-universal2-1.18.1/lib/libonnxruntime.1.18.1.dylib
+        ${LIBSAMPLERATE_UNIVERSAL}
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
 )
 
-# Add JUCE include directories
-target_include_directories(${PROJECT_NAME} PRIVATE ${JUCE_SOURCE_DIR}/modules)
-
+# ==== Compiler Definitions & Flags ====
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-        # JUCE_WEB_BROWSER=1 is important for using WebBrowserComponent
         JUCE_WEB_BROWSER=1
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
-        # This will enable WebView2 as the WebView backend on Windows
         JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING=1
 )
 
-set_source_files_properties(${SOURCES} PROPERTIES COMPILE_OPTIONS "${CXX_PROJECT_WARNINGS}")
-
-# In Visual Studio this command provides a nice grouping of source files in "filters".
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/..)
-
-# Suppress warnings from ONNX Runtime
 target_compile_options(${PROJECT_NAME}
     PRIVATE
         -Wno-shadow
@@ -143,15 +138,19 @@ target_compile_options(${PROJECT_NAME}
         -Wno-c++98-compat-extra-semi
 )
 
+# ==== Post Build Script ====
 add_custom_command(
     TARGET "${PROJECT_NAME}_VST3"
     POST_BUILD
-    COMMAND /bin/bash ${CMAKE_SOURCE_DIR}/post_build.sh
+    COMMAND /bin/bash ${CMAKE_SOURCE_DIR}/scripts/post_build.sh
     ARGS
         "BUILT_PRODUCTS_DIR=$<TARGET_BUNDLE_DIR:${PROJECT_NAME}_VST3>"
         "PROJECT_DIR=${CMAKE_SOURCE_DIR}"
         "TARGETNAME=${PROJECT_NAME}_VST3"
-        "LIBSAMPLERATE_DIR=${CMAKE_SOURCE_DIR}/External_Libs/x86/libsamplerate"
+        "LIBSAMPLERATE_DIR=${CMAKE_SOURCE_DIR}/External_Libs/libsamplerate/universal"
         "ONNX_DIR=${CMAKE_SOURCE_DIR}/External_Libs/onnxruntime-osx-universal2-1.18.1"
     COMMENT "Executing post-build script for ${PROJECT_NAME} - VST3"
 )
+
+# ==== Visual Studio Source Grouping (Optional) ====
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/..)

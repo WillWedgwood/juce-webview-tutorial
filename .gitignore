@@ -452,3 +452,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Installer/AQUA_v1_x86/.DS_Store
+Installer/.DS_Store
+.DS_Store
