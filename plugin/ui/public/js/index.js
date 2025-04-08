@@ -94,18 +94,17 @@ toggleButton.addEventListener("click", () => {
   }
 });
 
-// Listen for the "outputLevel" event from the backend
-window.__JUCE__.backend.addEventListener("outputLevel", () => {
-  fetch(Juce.getBackendResourceAddress("outputLevel.json"))
+// Listen for the "yamnetOut" event from the backend
+window.__JUCE__.backend.addEventListener("yamnetOut", () => {
+  fetch(Juce.getBackendResourceAddress("yamnetOut.json"))
     .then((response) => response.text())
-    .then((outputLevel) => {
+    .then((yamnetOut) => {
 
       // Parse the JSON data
-      const levelData = JSON.parse(outputLevel);
+      const yamnetOutput = JSON.parse(yamnetOut);
 
-      const scores = levelData.scores;
+      const scores = yamnetOutput.scores;
       console.log("Received value of 'scores':", scores);
-
 
       // ==== Classification Data Handling ==== //
 

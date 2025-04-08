@@ -137,7 +137,7 @@ void AudioPluginAudioProcessorEditor::resized() {
 }
 
 void AudioPluginAudioProcessorEditor::timerCallback() {
-  webView.emitEventIfBrowserIsVisible("outputLevel", juce::var{});
+  webView.emitEventIfBrowserIsVisible("yamnetOut", juce::var{});
 }
 
 auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
@@ -147,7 +147,7 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
   const auto resourceToRetrieve =
       url == "/" ? "index.html" : url.fromFirstOccurrenceOf("/", false, false);
 
-  if (resourceToRetrieve == "outputLevel.json") {
+  if (resourceToRetrieve == "yamnetOut.json") {
     juce::DynamicObject::Ptr levelData{new juce::DynamicObject{}};
 
     // Use the getter to retrieve output_0
