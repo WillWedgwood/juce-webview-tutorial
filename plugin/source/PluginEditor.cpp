@@ -149,15 +149,9 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
 
   if (resourceToRetrieve == "outputLevel.json") {
     juce::DynamicObject::Ptr levelData{new juce::DynamicObject{}};
-  
-    // Get the maxIndex from the audio classifier
-    int maxIndex = processorRef.getAudioClassification().maxIndex; // Ensure this method exists
 
     // Use the getter to retrieve output_0
     std::vector<float> outputScores = processorRef.getAudioClassification().getOutputScores();
-
-    // Set the maxIndex as the "left" property
-    levelData->setProperty("left", maxIndex);
 
     // Convert outputScores (std::span<float>) to juce::Array<juce::var>
     juce::Array<juce::var> scoresArray;

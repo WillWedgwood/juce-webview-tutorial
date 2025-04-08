@@ -32,17 +32,13 @@ class AudioClassification
 public:
     AudioClassification();
     virtual ~AudioClassification();
-    
-    std::atomic<int> maxIndex; // Thread-safe shared state
-    std::vector<int> indicesAboveThreshold;
-
+  
     std::vector<float> getOutputScores() const;
     
     void prepareToPlay(const double sampleRate, const int samplesPerBlock, const int detectionFrequency);
     
     void processSample(const float sample);
     void processClassification(std::span<float> stft_input);
-    void indexClassification(int maxIndex, bool wind, bool rain, bool signal);
 
     void testONNXRuntime();
 

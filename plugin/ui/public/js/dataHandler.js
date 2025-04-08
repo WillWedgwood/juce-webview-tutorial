@@ -1,4 +1,4 @@
-import { ClassificationLabels, ClassificationIndices } from "./constants.js";
+import { ClassificationIndices } from "./constants.js";
 
 // ==== Classification Data Handling ==== //
 export const convertScoresToClassifications = (scores, threshold) => {

@@ -1,7 +1,6 @@
 import * as Juce from "./juce/index.js";
 
 import { ClassificationLabels } from "./constants.js";
-import { setupContextMenu } from "./contextMenu.js";
 import { convertScoresToClassifications, convertScoresToConfidence } from "./dataHandler.js";
 
 import { setupClassificationGraph, updateClassificationGraph } from "./classificationGraph.js";
@@ -100,6 +99,7 @@ window.__JUCE__.backend.addEventListener("outputLevel", () => {
   fetch(Juce.getBackendResourceAddress("outputLevel.json"))
     .then((response) => response.text())
     .then((outputLevel) => {
+
       // Parse the JSON data
       const levelData = JSON.parse(outputLevel);
 

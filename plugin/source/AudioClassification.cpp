@@ -106,28 +106,6 @@ void AudioClassification::processSample(const float sample)
 
         // Perform classification
         processClassification(classifierBufferSpan);
-
-        maxIndex = static_cast<int>(std::distance(output_0.begin(), std::max_element(output_0.begin(), output_0.end())));
-        DBG("Max index: " << maxIndex);
-        
-        // ======== Output Above Threshold =================
-        float threshold = 0.5f; // Example threshold value
-
-        // Vector to store indices of values greater than the threshold
-        for (int i = 0; i < output_0.size(); ++i)
-        {
-            if (output_0[i] > threshold) // Check if value is above threshold
-            {
-                indicesAboveThreshold.push_back(i); // Store the index
-            }
-        }
-
-        // // Optionally, print the indices above the threshold
-        // for (int index : indicesAboveThreshold)
-        // {
-        //     DBG("Index above threshold: " << index);
-        // }
-
     }
 }
 void AudioClassification::processClassification(std::span<float> waveform) {
