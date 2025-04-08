@@ -2,7 +2,7 @@ import * as Juce from "./juce/index.js";
 
 import { ClassificationLabels } from "./constants.js";
 import { setupContextMenu } from "./contextMenu.js";
-import { addClassification, mapValueToClassification, convertScoresToConfidence } from "./dataHandler.js";
+import { convertScoresToClassifications, convertScoresToConfidence } from "./dataHandler.js";
 
 import { setupClassificationGraph, updateClassificationGraph } from "./classificationGraph.js";
 import { setupConfidenceGraph, updateConfidenceGraph } from "./confidenceTrackingGraph.js";
@@ -103,25 +103,25 @@ window.__JUCE__.backend.addEventListener("outputLevel", () => {
       // Parse the JSON data
       const levelData = JSON.parse(outputLevel);
 
-      // ==== Classification Data Handling ==== //
-
-      // Use the first value of the array
-      const leftValue = Array.isArray(levelData.left) ? levelData.left[0] : levelData.left;
-      //console.log("Received value of 'left':", leftValue);
-
-      // Map the leftValue to a classification label using the helper function
-      const classificationLabel = mapValueToClassification(leftValue);
-
-      //console.log("Classification Value is:", classificationLabel);
-
-      // Add the classification to the graph
-      if (classificationLabel) {
-        data = addClassification(classificationLabel, data, labels, removedLabels);
-      }
-
-      // ==== Confidence Data Handling ==== //
       const scores = levelData.scores;
       console.log("Received value of 'scores':", scores);
+
+
+      // ==== Classification Data Handling ==== //
+
+      // Convert scores to classifications based on a threshold
+      const threshold = 0.5; // Example threshold
+      const classifications = convertScoresToClassifications(scores, threshold);
+
+      // Add classifications to the graph
+      classifications.forEach(({ label, timestamp, value }) => {
+        data.push({ id: timestamp, timestamp, label, value });
+      });
+
+      // Filter data to keep only the last 60 seconds
+      data = data.filter(d => d.timestamp > Date.now() - 60000);
+
+      // ==== Confidence Data Handling ==== //
 
       // Convert scores to confidence values
       confidenceData = convertScoresToConfidence(scores);

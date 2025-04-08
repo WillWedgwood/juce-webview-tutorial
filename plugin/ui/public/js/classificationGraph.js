@@ -51,7 +51,7 @@ export const updateClassificationGraph = (svg, xScale, yScale, xAxis, yAxis, dat
     .attr("cx", d => xScale(d.timestamp))
     .attr("cy", d => yScale(d.label) + yScale.bandwidth() / 2)
     .attr("r", 8)
-    .attr("fill", "red")
+    .attr("fill", d => d.value > 0.8 ? "red" : "orange") // Example: color based on value
     .merge(circles)
     .transition()
     .duration(200)

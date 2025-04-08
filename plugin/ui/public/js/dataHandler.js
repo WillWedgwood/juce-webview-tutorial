@@ -1,33 +1,31 @@
 import { ClassificationLabels, ClassificationIndices } from "./constants.js";
 
 // ==== Classification Data Handling ==== //
-export const addClassification = (label, data, labels, removedLabels) => {
-  if (!label || removedLabels.includes(label)) {
-    console.log(`Skipping classification: ${label || "Unmatched"}`);
-    return data;
+export const convertScoresToClassifications = (scores, threshold) => {
+  if (!scores || scores.length === 0) {
+    console.error("Invalid or empty scores array.");
+    return [];
   }
 
-  const newEntry = { id: Date.now(), timestamp: Date.now(), label };
-  data.push(newEntry);
+  const now = Date.now();
 
-  return data.filter(d => d.timestamp > Date.now() - 60000);
-};
+  // Helper function to check if a score exceeds the threshold
+  const isAboveThreshold = (score) => score > threshold;
 
-export function mapValueToClassification(value) {
-  console.log("Received value:", value);
+  // Iterate through ClassificationIndices to find classifications above the threshold
+  const classifications = Object.entries(ClassificationIndices).flatMap(([label, indices]) => {
+    const highestScore = Math.max(...indices.map(index => scores[index] || 0));
 
-  // Iterate through the ClassificationIndices to find a match
-  for (const [label, indices] of Object.entries(ClassificationIndices)) {
-    if (indices.includes(value)) {
-      console.log(`Mapping value ${value} to ${label}`);
-      return label;
+    if (isAboveThreshold(highestScore)) {
+      return { timestamp: now, label, value: highestScore };
     }
-  }
 
-  // If no match, return null
-  console.log(`Value ${value} does not match any classification.`);
-  return null;
-}
+    return [];
+  });
+
+  console.log("Classifications above threshold:", classifications);
+  return classifications;
+};
 
 // ==== Confidence Tracking Mode ==== //
 // Store historical confidence data (global variable)
