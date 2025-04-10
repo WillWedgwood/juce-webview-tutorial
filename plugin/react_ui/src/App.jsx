@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ClassificationGraph } from './components/graphs/ClassificationGraph';
+import { ClassificationGraph } from './components/ClassificationGraph';
 import { ClassificationLabels } from './constants/constants';
 import './styles/App.css';
 
