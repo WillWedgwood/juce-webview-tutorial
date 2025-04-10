@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ClassificationGraph } from './components/ClassificationGraph';
+import { AudioClassificationGraph } from './components/AudioClassificationGraph';
 import { ClassificationLabels } from './constants/constants';
 import './styles/App.css';
 
@@ -32,7 +32,7 @@ function App() {
   return (
     <div className="app-container">
       <h1>Live Audio Classification</h1>
-      <ClassificationGraph 
+      <AudioClassificationGraph 
         data={data} 
         labels={labels} 
         removedLabels={removedLabels} 
