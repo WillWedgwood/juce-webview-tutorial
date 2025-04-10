@@ -1,0 +1,57 @@
+/* Dropdown container */
+.dropdown-container {
+    margin-bottom: 20px;
+  }
+  
+  /* Dropdown button */
+  .dropdown-button {
+    padding: 10px;
+    background-color: #1e293b; /* slate-800 */
+    color: white; /* White text */
+    border: 1px solid #334155; /* slate-700 */
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Dropdown options container */
+  .dropdown-options {
+    position: absolute; /* Ensure the dropdown doesn't affect parent layout */
+    margin-top: 5px;
+    border: 1px solid #334155; /* slate-700 */
+    border-radius: 4px;
+    background-color: #1e293b; /* slate-800 */
+    max-height: 200px;
+    overflow-y: auto; /* Allow scrolling within the dropdown */
+    z-index: 10; /* Ensure it appears above other elements */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Fixed 3 columns */
+    gap: 10px; /* Space between items */
+    padding: 10px; /* Add padding inside the grid */
+    width: 300px; /* Set a fixed width for the dropdown */
+  }
+  
+  /* Dropdown item */
+  .dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: white; /* White text */
+    background-color: #1e293b; /* slate-800 */
+    text-align: center; /* Center text */
+    border-radius: 4px; /* Rounded corners */
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Vertically center text */
+    justify-content: center; /* Horizontally center text */
+    word-wrap: break-word; /* Ensure long words wrap */
+    height: 60px; /* Fixed height for consistent alignment */
+  }
+  
+  /* Dropdown item hover */
+  .dropdown-item:hover {
+    background-color: #334155; /* slate-700 */
+  }
+  
+  /* Selected dropdown item */
+  .dropdown-item.selected {
+    background-color: #475569; /* slate-600 */
+    color: white; /* White text */
+  }

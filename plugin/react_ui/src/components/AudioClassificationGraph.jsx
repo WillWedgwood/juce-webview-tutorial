@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { useRef, useMemo, useCallback } from 'react';
-import { useD3Graph } from '../../hooks/useD3Graph';
-import '../../styles/graphs/audio-classification.css';
+import { useD3Graph } from '../hooks/useD3Graph';
+import '../styles/components/audio-classification.css';
 
 export const AudioClassificationGraph = ({ 
   data = [], 
