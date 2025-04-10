@@ -88,7 +88,7 @@ juce_add_binary_data(WebViewFiles
 add_custom_command(
     OUTPUT ${WEBVIEW_FILES_SOURCE_DIR}/index.html
     COMMAND npm install && npm run build
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ui
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/react_ui
     COMMENT "Building React GUI with Vite"
 )
 
