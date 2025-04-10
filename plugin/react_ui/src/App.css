@@ -1,0 +1,22 @@
+/* src/App.css */
+#root {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: #0f172a; /* slate-900 */
+  min-height: 100vh;
+  color: white;
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+svg {
+  background-color: #1e293b; /* slate-800 */
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}

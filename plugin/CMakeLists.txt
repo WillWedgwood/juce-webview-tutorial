@@ -66,7 +66,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 # ==== WebView UI Setup ====
-set(WEBVIEW_FILES_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ui/public")
+set(WEBVIEW_FILES_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/react_ui/dist")
 file(COPY "${JUCE_MODULES_DIR}/juce_gui_extra/native/javascript/"
      DESTINATION "${WEBVIEW_FILES_SOURCE_DIR}/js/juce/")
 
@@ -84,6 +84,16 @@ juce_add_binary_data(WebViewFiles
     NAMESPACE webview_files
     SOURCES ${TARGET_WEBVIEW_FILES_ZIP_PATH}
 )
+
+add_custom_command(
+    OUTPUT ${WEBVIEW_FILES_SOURCE_DIR}/index.html
+    COMMAND npm install && npm run build
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ui
+    COMMENT "Building React GUI with Vite"
+)
+
+add_custom_target(vite_build ALL DEPENDS ${WEBVIEW_FILES_SOURCE_DIR}/index.html)
+add_dependencies(${PROJECT_NAME} vite_build)
 
 # ==== External Dependencies ====
 
