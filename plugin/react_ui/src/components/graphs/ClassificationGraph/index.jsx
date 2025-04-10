@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useD3Graph } from '../useD3Graph';
+import { useD3Graph } from '../../../hooks/useD3Graph';
 import './styles.css';
 
 export const ClassificationGraph = ({ data = [], labels = [], removedLabels = [], config = {} }) => {

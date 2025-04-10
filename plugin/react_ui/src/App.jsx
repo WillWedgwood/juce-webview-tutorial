@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react';
 import { ClassificationGraph } from './components/graphs/ClassificationGraph';
-import './App.css';
+import { ClassificationLabels } from './constants/constants';
+import './styles/App.css';
 
 function App() {
   const [data, setData] = useState([]);
 
-  const labels = [
-    "Rain", "Wind", "Crowd", "Speech", "Shout",
-    "Music (Tannoy)", "Silence", "Echo", "Static", "Distortion",
-    "White Noise", "Pink Noise", "Sine Wave", "Hum"
-  ];
+  const labels = Object.values(ClassificationLabels);
   const removedLabels = [];
 
   useEffect(() => {
