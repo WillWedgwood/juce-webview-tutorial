@@ -3,6 +3,7 @@ import { AudioClassificationGraph } from './components/AudioClassificationGraph'
 import { ClassificationLabels } from './constants/constants';
 import { LabelDropdown } from './components/LabelDropdown';
 import { convertScoresToClassifications } from './utils/dataHandler';
+import * as Juce from "./juce/index.js"; // This imports all named exports
 import './styles/App.css';
 
 function App() {
@@ -17,11 +18,8 @@ function App() {
 
     const handleYamnetData = async () => {
       try {
-        if (!window.Juce?.getBackendResourceAddress) {
-          throw new Error('JUCE API not available');
-        }
-
-        const response = await fetch(window.Juce.getBackendResourceAddress("yamnetOut.json"));
+        // Use the imported Juce.getBackendResourceAddress instead of window.Juce
+        const response = await fetch(Juce.getBackendResourceAddress("yamnetOut.json"));
         if (!response.ok) throw new Error('Network response was not ok');
         
         const yamnetOut = await response.text();
