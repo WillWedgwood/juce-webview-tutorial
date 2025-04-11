@@ -19,3 +19,25 @@ svg {
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
+
+.connection-status {
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.connection-status.connected {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.connection-status.disconnected {
+  background-color: #F44336;
+  color: white;
+}
+
+.connection-status.connecting {
+  background-color: #FFC107;
+  color: black;
+}

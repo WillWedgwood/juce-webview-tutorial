@@ -1,39 +1,89 @@
 import { useEffect, useState } from 'react';
 import { AudioClassificationGraph } from './components/AudioClassificationGraph';
 import { ClassificationLabels } from './constants/constants';
-import { LabelDropdown } from './components/LabelDropdown'; // Import the new component
+import { LabelDropdown } from './components/LabelDropdown';
+import { convertScoresToClassifications } from './utils/dataHandler';
 import './styles/App.css';
 
 function App() {
   const [data, setData] = useState([]);
-  const [removedLabels, setRemovedLabels] = useState([]); // State for removed labels
-
+  const [removedLabels, setRemovedLabels] = useState([]);
+  const [connectionStatus, setConnectionStatus] = useState('connecting');
   const labels = Object.values(ClassificationLabels);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const randomLabel = labels[Math.floor(Math.random() * labels.length)];
-      setData(prev => {
-        const newData = [
-          ...prev,
-          {
-            id: Date.now(),
-            timestamp: Date.now(),
-            label: randomLabel,
-            value: Math.random()
-          }
-        ];
-        return newData.slice(-100); // Limit to 100 data points
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [labels]);
+    let isMounted = true;
+    let juceEventListener = null;
+
+    const handleYamnetData = async () => {
+      try {
+        if (!window.Juce?.getBackendResourceAddress) {
+          throw new Error('JUCE API not available');
+        }
+
+        const response = await fetch(window.Juce.getBackendResourceAddress("yamnetOut.json"));
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const yamnetOut = await response.text();
+        const yamnetOutput = JSON.parse(yamnetOut);
+        
+        const classifications = convertScoresToClassifications(yamnetOutput.scores, 0.5);
+
+        if (isMounted) {
+          setData(prev => [
+            ...prev.slice(-99),
+            ...classifications.map(({ label, value }) => ({
+              id: Date.now(),
+              timestamp: Date.now(),
+              label,
+              value
+            }))
+          ]);
+          setConnectionStatus('connected');
+        }
+      } catch (error) {
+        console.error("Data processing error:", error);
+        if (isMounted) setConnectionStatus('disconnected');
+      }
+    };
+
+    // Initialize JUCE connection
+    const initJuceConnection = () => {
+      if (window.__JUCE__?.backend) {
+        try {
+          juceEventListener = window.__JUCE__.backend.addEventListener(
+            "yamnetOut",
+            handleYamnetData
+          );
+          setConnectionStatus('connected');
+        } catch (e) {
+          console.error("JUCE event listener error:", e);
+          setConnectionStatus('disconnected');
+        }
+      } else {
+        setConnectionStatus('disconnected');
+      }
+    };
+
+    // Start with a small timeout to ensure JUCE is loaded
+    const connectionTimeout = setTimeout(initJuceConnection, 300);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(connectionTimeout);
+      if (juceEventListener && window.__JUCE__?.backend) {
+        window.__JUCE__.backend.removeEventListener("yamnetOut", juceEventListener);
+      }
+    };
+  }, []);
 
   return (
     <div className="app-container">
       <h1>Live Audio Classification TEST</h1>
+      <div className={`connection-status ${connectionStatus}`}>
+        Status: {connectionStatus.toUpperCase()}
+      </div>
 
-      {/* Use the new LabelDropdown component */}
       <LabelDropdown 
         labels={labels} 
         removedLabels={removedLabels} 
@@ -45,10 +95,15 @@ function App() {
         labels={labels} 
         removedLabels={removedLabels} 
         config={{
-          colors: { high: "#ff0000", normal: "#ffa500" },
+          colors: { 
+            high: "#ff0000", 
+            normal: "#ffa500",
+            disconnected: "#888888" // Gray when disconnected
+          },
           circleRadius: 8,
           width: 900,
-          height: 500
+          height: 500,
+          connectionStatus // Pass status to graph
         }}
       />
     </div>
