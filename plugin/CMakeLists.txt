@@ -67,32 +67,60 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 # ==== WebView UI Setup ====
 set(WEBVIEW_FILES_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/react_ui/dist")
-file(COPY "${JUCE_MODULES_DIR}/juce_gui_extra/native/javascript/"
-     DESTINATION "${WEBVIEW_FILES_SOURCE_DIR}/js/juce/")
-
 set(WEBVIEW_FILES_ZIP_NAME "webview_files.zip")
 set(TARGET_WEBVIEW_FILES_ZIP_PATH "${CMAKE_BINARY_DIR}/${WEBVIEW_FILES_ZIP_NAME}")
-file(ARCHIVE_CREATE
-    OUTPUT "${TARGET_WEBVIEW_FILES_ZIP_PATH}"
-    PATHS "${WEBVIEW_FILES_SOURCE_DIR}"
-    FORMAT zip
-    VERBOSE
+
+# Get all React source files to track for changes
+file(GLOB_RECURSE REACT_SOURCE_FILES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/react_ui/src/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/react_ui/index.html"
+    "${CMAKE_CURRENT_SOURCE_DIR}/react_ui/package.json"
+    "${CMAKE_CURRENT_SOURCE_DIR}/react_ui/vite.config.js")
+
+# --- Step 1: Build Vite/React GUI ---
+add_custom_command(
+    OUTPUT ${WEBVIEW_FILES_SOURCE_DIR}/.build_complete  # Using marker file
+    COMMAND npm install
+    COMMAND npm run build
+    COMMAND ${CMAKE_COMMAND} -E touch ${WEBVIEW_FILES_SOURCE_DIR}/.build_complete
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/react_ui
+    DEPENDS ${REACT_SOURCE_FILES}  # Rebuild if any source files change
+    COMMENT "Building React GUI with Vite"
 )
 
+# --- Step 2: Copy JUCE JS helpers to dist (after build) ---
+add_custom_command(
+    OUTPUT ${WEBVIEW_FILES_SOURCE_DIR}/js/juce/.copy_complete
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${WEBVIEW_FILES_SOURCE_DIR}/js/juce
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${JUCE_MODULES_DIR}/juce_gui_extra/native/javascript/"
+        "${WEBVIEW_FILES_SOURCE_DIR}/js/juce/"
+    COMMAND ${CMAKE_COMMAND} -E touch ${WEBVIEW_FILES_SOURCE_DIR}/js/juce/.copy_complete
+    DEPENDS ${WEBVIEW_FILES_SOURCE_DIR}/.build_complete
+    COMMENT "Copying JUCE JavaScript helpers"
+)
+
+# --- Step 3: Create ZIP (only after everything is ready) ---
+add_custom_command(
+    OUTPUT ${TARGET_WEBVIEW_FILES_ZIP_PATH}
+    COMMAND ${CMAKE_COMMAND} -E tar c ${TARGET_WEBVIEW_FILES_ZIP_PATH}
+        --format=zip
+        -- ${WEBVIEW_FILES_SOURCE_DIR}/
+    DEPENDS ${WEBVIEW_FILES_SOURCE_DIR}/js/juce/.copy_complete
+    COMMENT "Creating webview_files.zip from Vite output"
+)
+
+# --- Step 4: Embed ZIP into JUCE binary ---
 juce_add_binary_data(WebViewFiles
     HEADER_NAME WebViewFiles.h
     NAMESPACE webview_files
     SOURCES ${TARGET_WEBVIEW_FILES_ZIP_PATH}
 )
 
-add_custom_command(
-    OUTPUT ${WEBVIEW_FILES_SOURCE_DIR}/index.html
-    COMMAND npm install && npm run build
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/react_ui
-    COMMENT "Building React GUI with Vite"
+# --- Final targets ---
+add_custom_target(vite_build ALL
+    DEPENDS ${TARGET_WEBVIEW_FILES_ZIP_PATH}
 )
-
-add_custom_target(vite_build ALL DEPENDS ${WEBVIEW_FILES_SOURCE_DIR}/index.html)
 add_dependencies(${PROJECT_NAME} vite_build)
 
 # ==== External Dependencies ====

@@ -31,7 +31,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1>Live Audio Classification</h1>
+      <h1>Live Audio Classification TEST</h1>
 
       {/* Use the new LabelDropdown component */}
       <LabelDropdown 
