@@ -28,10 +28,7 @@ export const convertScoresToClassifications = (scores, threshold) => {
 };
 
 // ==== Confidence Tracking Mode ==== //
-// Store historical confidence data (global variable)
-let confidenceHistory = [];
-
-export const convertScoresToConfidence = (scores) => {
+export const convertScoresToConfidence = (scores, previousConfidenceData = [], timeWindow = 60000) => {
   if (!scores || scores.length === 0) {
     console.error("Invalid or empty scores array.");
     return [];
@@ -49,13 +46,13 @@ export const convertScoresToConfidence = (scores) => {
     value: roundValue(clampValue(getHighestScore(indices)))
   }));
 
-  // Append new data to history
-  confidenceHistory.push(...newConfidenceData);
+  // Combine new data with previous data and filter by timeWindow
+  const updatedConfidenceData = [
+    ...previousConfidenceData.filter(d => d.timestamp > now - timeWindow),
+    ...newConfidenceData
+  ];
 
-  // Filter history to keep only the last 60 seconds
-  confidenceHistory = confidenceHistory.filter(d => d.timestamp > now - 60000);
+  console.log("Updated Confidence Data:", updatedConfidenceData);
 
-  console.log("Updated Confidence History:", confidenceHistory);
-
-  return confidenceHistory;
+  return updatedConfidenceData;
 };

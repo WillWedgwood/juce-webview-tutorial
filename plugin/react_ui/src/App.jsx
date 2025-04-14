@@ -26,40 +26,29 @@ function App() {
         
         const yamnetOut = await response.text();
         const yamnetOutput = JSON.parse(yamnetOut);
-    
+
         const currentTime = Date.now();
-    
-        // Process both classifications and confidence data
+
+        // Process classifications
         const newClassifications = convertScoresToClassifications(yamnetOutput.scores, 0.5).map(({ label, value }) => ({
           id: `${currentTime}-${label}`,
           timestamp: currentTime,
           label,
           value
         }));
-    
-        const newConfidenceData = convertScoresToConfidence(yamnetOutput.scores).map(({ label, value }) => ({
-          id: `${currentTime}-${label}`,
-          timestamp: currentTime,
-          label,
-          value
-        }));
-    
+
+        // Process confidence data
+        setConfidenceData(prevConfidenceData =>
+          convertScoresToConfidence(yamnetOutput.scores, prevConfidenceData, 60000) // 60-second time window
+        );
+
         if (isMounted) {
-          // Define the timeWindow (e.g., 1 minute = 60000 ms)
-          const timeWindow = 60000; // Adjust this value as needed
-    
           // Update classifications
           setClassifications(prev => [
-            ...prev.filter(d => d.timestamp >= currentTime - timeWindow), // Keep points within the timeWindow
+            ...prev.filter(d => d.timestamp >= currentTime - 60000), // Keep points within the timeWindow
             ...newClassifications
           ]);
-    
-          // Update confidence data
-          setConfidenceData(prev => [
-            ...prev.filter(d => d.timestamp >= currentTime - timeWindow), // Keep points within the timeWindow
-            ...newConfidenceData
-          ]);
-    
+
           setConnectionStatus('connected');
         }
       } catch (error) {

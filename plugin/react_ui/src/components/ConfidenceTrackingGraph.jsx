@@ -16,7 +16,7 @@ export const ConfidenceTrackingGraph = ({
   const fullConfig = {
     width: 800,
     height: 400,
-    margin: { top: 20, right: 100, bottom: 40, left: 100 },
+    margin: { top: 20, right: 50, bottom: 40, left: 100 },
     timeWindow: 60000, // 1 minute
     ...config
   };
