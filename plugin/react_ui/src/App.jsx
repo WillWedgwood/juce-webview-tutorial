@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { AudioClassificationGraph } from './components/AudioClassificationGraph';
-import { ConfidenceTrackingGraph } from './components/ConfidenceTrackingGraph'; // Import the new graph
+import { ConfidenceTrackingGraph } from './components/ConfidenceTrackingGraph';
 import { ClassificationLabels } from './constants/constants';
 import { LabelDropdown } from './components/LabelDropdown';
-import { convertScoresToClassifications } from './utils/dataHandler';
+import { convertScoresToClassifications, convertScoresToConfidence } from './utils/dataHandler';
 import * as Juce from "./juce/index.js";
 import './styles/App.css';
 
 function App() {
-  const [data, setData] = useState([]);
+  const [classifications, setClassifications] = useState([]); // For classification data
+  const [confidenceData, setConfidenceData] = useState([]); // For confidence data
   const [removedLabels, setRemovedLabels] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [graphType, setGraphType] = useState('confidence'); // 'classification' or 'confidence'
@@ -25,19 +26,40 @@ function App() {
         
         const yamnetOut = await response.text();
         const yamnetOutput = JSON.parse(yamnetOut);
-        
-        const classifications = convertScoresToClassifications(yamnetOutput.scores, 0.5);
-
+    
+        const currentTime = Date.now();
+    
+        // Process both classifications and confidence data
+        const newClassifications = convertScoresToClassifications(yamnetOutput.scores, 0.5).map(({ label, value }) => ({
+          id: `${currentTime}-${label}`,
+          timestamp: currentTime,
+          label,
+          value
+        }));
+    
+        const newConfidenceData = convertScoresToConfidence(yamnetOutput.scores).map(({ label, value }) => ({
+          id: `${currentTime}-${label}`,
+          timestamp: currentTime,
+          label,
+          value
+        }));
+    
         if (isMounted) {
-          setData(prev => [
-            ...prev.slice(-99),
-            ...classifications.map(({ label, value }) => ({
-              id: Date.now(),
-              timestamp: Date.now(),
-              label,
-              value
-            }))
+          // Define the timeWindow (e.g., 1 minute = 60000 ms)
+          const timeWindow = 60000; // Adjust this value as needed
+    
+          // Update classifications
+          setClassifications(prev => [
+            ...prev.filter(d => d.timestamp >= currentTime - timeWindow), // Keep points within the timeWindow
+            ...newClassifications
           ]);
+    
+          // Update confidence data
+          setConfidenceData(prev => [
+            ...prev.filter(d => d.timestamp >= currentTime - timeWindow), // Keep points within the timeWindow
+            ...newConfidenceData
+          ]);
+    
           setConnectionStatus('connected');
         }
       } catch (error) {
@@ -106,7 +128,7 @@ function App() {
 
       {graphType === 'classification' ? (
         <AudioClassificationGraph 
-          data={data} 
+          data={classifications} 
           labels={labels} 
           removedLabels={removedLabels} 
           config={{
@@ -123,7 +145,7 @@ function App() {
         />
       ) : (
         <ConfidenceTrackingGraph 
-          data={data} 
+          data={confidenceData} 
           labels={labels} 
           removedLabels={removedLabels} 
           config={{
