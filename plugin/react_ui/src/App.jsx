@@ -4,6 +4,7 @@ import { ConfidenceTrackingGraph } from './components/ConfidenceTrackingGraph';
 import { ClassificationLabels } from './constants/constants';
 import { LabelDropdown } from './components/LabelDropdown';
 import { convertScoresToClassifications, convertScoresToConfidence } from './utils/dataHandler';
+import ThresholdSlider from './components/ThresholdSlider'; // Import the ThresholdSlider component
 import * as Juce from "./juce/index.js";
 import './styles/App.css';
 
@@ -12,6 +13,7 @@ function App() {
   const [confidenceData, setConfidenceData] = useState([]); // For confidence data
   const [removedLabels, setRemovedLabels] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
+  const [threshold, setThreshold] = useState(0.5); // Threshold for classification
   const [graphType, setGraphType] = useState('confidence'); // 'classification' or 'confidence'
   const labels = Object.values(ClassificationLabels);
 
@@ -30,7 +32,7 @@ function App() {
         const currentTime = Date.now();
 
         // Process classifications
-        const newClassifications = convertScoresToClassifications(yamnetOutput.scores, 0.5).map(({ label, value }) => ({
+        const newClassifications = convertScoresToClassifications(yamnetOutput.scores, threshold).map(({ label, value }) => ({
           id: `${currentTime}-${label}`,
           timestamp: currentTime,
           label,
@@ -83,7 +85,7 @@ function App() {
         window.__JUCE__.backend.removeEventListener("yamnetOut", juceEventListener);
       }
     };
-  }, []);
+  }, [threshold]);
 
   return (
     <div className="app-container">
@@ -113,6 +115,9 @@ function App() {
             Confidence View
           </button>
         </div>
+
+        {/* Add the ThresholdSlider component */}
+        <ThresholdSlider threshold={threshold} setThreshold={setThreshold} />
       </div>
 
       {graphType === 'classification' ? (
