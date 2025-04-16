@@ -1,42 +1,9 @@
+.audio-classification-graph {
+  /* Inherits base styles */
+}
 
-.classification-graph {
-    background-color: #1e293b; /* slate-800 equivalent */
-    border-radius: 0.75rem; /* rounded-xl */
-    padding: 1rem; /* p-4 */
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
-    margin: 1rem 0;
-  }
-  
-  /* Axis styling */
-  .x-axis text,
-  .y-axis text {
-    fill: #e2e8f0; /* slate-200 */
-    font-size: 12px;
-  }
-  
-  /* Axis line styling */
-  .x-axis path,
-  .y-axis path,
-  .x-axis line,
-  .y-axis line {
-    stroke: #475569; /* slate-600 */
-  }
-  
-  /* Title styling */
-  .classification-graph h2 {
-    color: white;
-    font-size: 1.25rem; /* text-xl */
-    font-weight: 600; /* font-semibold */
-    margin-bottom: 0.5rem; /* mb-2 */
-  }
-  
-  /* Circle hover effects */
-  circle {
-    transition: r 0.2s ease;
-  }
-  
-  circle:hover {
-    r: 10;
-    stroke: white;
-    stroke-width: 1.5;
-  }
+/* Classification-specific additions */
+.audio-classification-graph circle:hover {
+  r: 10;
+  stroke: white;
+}

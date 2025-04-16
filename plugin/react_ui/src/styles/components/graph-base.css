@@ -1,0 +1,29 @@
+.confidence-tracking-graph,
+.audio-classification-graph,
+
+/* Base styles for ALL graphs */
+.graph-container {
+    position: relative;
+    background-color: #1e293b;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .graph-container h2 {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+    z-index: 10;
+  }
+  
+  .graph-container svg {
+    box-shadow: none;
+    border: none;
+    display: block; /* Removes extra space below SVG */
+  }

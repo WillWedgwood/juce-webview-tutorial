@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { useRef, useMemo, useCallback } from 'react';
 import { useD3Graph } from '../hooks/useD3Graph';
-import '../styles/components/audio-classification.css';
+import '../styles/components/graph-base.css';
 
 export const AudioClassificationGraph = ({ 
   data = [], 
@@ -13,7 +13,7 @@ export const AudioClassificationGraph = ({
   const fullConfig = {
     width: 800,
     height: 400,
-    margin: { top: 20, right: 100, bottom: 40, left: 20 },
+    margin: { top: 20, right: 100, bottom: 40, left: 100 },
     circleRadius: 8,
     colorThreshold: 0.8,
     colors: { high: "red", normal: "orange" },

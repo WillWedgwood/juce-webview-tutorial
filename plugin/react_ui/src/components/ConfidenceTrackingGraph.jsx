@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { useRef, useMemo, useCallback } from 'react';
 import { useD3Graph } from '../hooks/useD3Graph';
-import '../styles/components/confidence-tracking.css';
+import '../styles/components/graph-base.css';
 
 // Persistent color map outside component to maintain color consistency
 const colorMap = new Map();

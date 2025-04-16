@@ -21,10 +21,12 @@ svg {
 }
 
 .connection-status {
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
   padding: 0.5rem;
   border-radius: 4px;
-  margin-bottom: 1rem;
-  font-weight: bold;
 }
 
 .connection-status.connected {
@@ -42,28 +44,37 @@ svg {
   color: black;
 }
 
-/* Add these to your existing App.css */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: #fff; /* Ensure text is visible on a dark background */
+}
+
 .graph-controls {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  justify-content: center; /* Center the controls horizontally */
   align-items: center;
-  margin-bottom: 1rem;
-  gap: 1rem;
+  gap: 20px; /* Add spacing between controls */
+  margin-bottom: 20px;
 }
 
 .graph-toggle {
   display: flex;
-  gap: 0.5rem;
+  gap: 10px; /* Add spacing between toggle buttons */
 }
 
 .graph-toggle button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #334155; /* slate-700 */
-  color: white;
+  padding: 10px 20px;
+  font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  border: none;
+  border-radius: 5px;
+  background-color: #444; /* Default button background */
+  color: #fff;
+  transition: background-color 0.3s ease;
 }
 
 .graph-toggle button:hover {
@@ -71,11 +82,36 @@ svg {
 }
 
 .graph-toggle button.active {
-  background-color: #1d4ed8; /* blue-700 */
-  font-weight: bold;
+  background-color: #007bff; /* Highlight active button */
+  color: #fff;
 }
 
-/* Adjust the dropdown to take available space */
-.graph-controls > :first-child {
-  flex-grow: 1;
+.threshold-slider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px; /* Set a fixed width for the slider */
+}
+
+.threshold-slider label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.threshold-slider .slider {
+  width: 100%;
+}
+
+.graph-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px; /* Limit the graph width */
+}
+
+.graph-container h2 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  text-align: center;
 }

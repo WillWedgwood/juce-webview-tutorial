@@ -89,7 +89,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1>Live Audio Classification TEST</h1>
+      <h1>Live Audio Classification</h1>
       <div className={`connection-status ${connectionStatus}`}>
         Status: {connectionStatus.toUpperCase()}
       </div>
@@ -116,39 +116,40 @@ function App() {
           </button>
         </div>
 
-        {/* Add the ThresholdSlider component */}
         <ThresholdSlider threshold={threshold} setThreshold={setThreshold} />
       </div>
 
-      {graphType === 'classification' ? (
-        <AudioClassificationGraph 
-          data={classifications} 
-          labels={labels} 
-          removedLabels={removedLabels} 
-          config={{
-            colors: { 
-              high: "#ff0000", 
-              normal: "#ffa500",
-              disconnected: "#888888"
-            },
-            circleRadius: 8,
-            width: 900,
-            height: 500,
-            connectionStatus
-          }}
-        />
-      ) : (
-        <ConfidenceTrackingGraph 
-          data={confidenceData} 
-          labels={labels} 
-          removedLabels={removedLabels} 
-          config={{
-            width: 900,
-            height: 500,
-            connectionStatus
-          }}
-        />
-      )}
+      <div className="graph-container">
+        {graphType === 'classification' ? (
+          <AudioClassificationGraph 
+            data={classifications} 
+            labels={labels} 
+            removedLabels={removedLabels} 
+            config={{
+              colors: { 
+                high: "#ff0000", 
+                normal: "#ffa500",
+                disconnected: "#888888"
+              },
+              circleRadius: 8,
+              width: 900,
+              height: 500,
+              connectionStatus
+            }}
+          />
+        ) : (
+          <ConfidenceTrackingGraph 
+            data={confidenceData} 
+            labels={labels} 
+            removedLabels={removedLabels} 
+            config={{
+              width: 900,
+              height: 500,
+              connectionStatus
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }
