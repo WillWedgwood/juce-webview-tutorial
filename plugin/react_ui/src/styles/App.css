@@ -86,28 +86,24 @@ svg {
   color: #fff;
 }
 
-.threshold-slider {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 200px; /* Set a fixed width for the slider */
-}
-
-.threshold-slider label {
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.threshold-slider .slider {
-  width: 100%;
+.vertical-slider-container {
+  position: absolute; /* Position the slider absolutely within the container */
+  left: 0; /* Align the slider to the left edge of the container */
+  top: 10; /* Align the slider to the top of the container */
+  background: #1e293b; /* Background color for the slider container */
+  padding: 15px 10px;
+  border-radius: 8px;
+  z-index: 10; /* Ensure the slider appears above the graph */
 }
 
 .graph-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: flex; /* Align items horizontally */
+  flex-direction: row; /* Horizontal layout */
+  align-items: flex-start; /* Align items at the top */
+  justify-content: center; /* Center the graph and slider horizontally */
   width: 100%;
   max-width: 900px; /* Limit the graph width */
+  gap: 20px; /* Add spacing between the slider and the graph */
 }
 
 .graph-container h2 {

@@ -115,11 +115,17 @@ function App() {
             Confidence View
           </button>
         </div>
-
-        <ThresholdSlider threshold={threshold} setThreshold={setThreshold} />
       </div>
 
       <div className="graph-container">
+        {/* Render the slider only for the Classification Graph */}
+        {graphType === 'classification' && (
+          <div className="vertical-slider-container">
+            <ThresholdSlider threshold={threshold} setThreshold={setThreshold} vertical={true} />
+          </div>
+        )}
+
+        {/* Render the appropriate graph */}
         {graphType === 'classification' ? (
           <AudioClassificationGraph 
             data={classifications} 

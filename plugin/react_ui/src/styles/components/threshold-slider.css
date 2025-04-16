@@ -1,51 +1,89 @@
 .threshold-slider {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .threshold-slider label {
-    font-size: 14px;
-    color: #4a5568; /* Tailwind's gray-700 */
-  }
-  
-  .threshold-slider .slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    background: #d1d5db; /* Tailwind's gray-300 */
-    border-radius: 5px;
-    outline: none;
-    transition: background 0.3s ease;
-  }
-  
-  .threshold-slider .slider:hover {
-    background: #9ca3af; /* Tailwind's gray-400 */
-  }
-  
-  .threshold-slider .slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    background: #3b82f6; /* Tailwind's blue-500 */
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .threshold-slider .slider::-webkit-slider-thumb:hover {
-    background: #2563eb; /* Tailwind's blue-600 */
-  }
-  
-  .threshold-slider .slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: #3b82f6; /* Tailwind's blue-500 */
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .threshold-slider .slider::-moz-range-thumb:hover {
-    background: #2563eb; /* Tailwind's blue-600 */
-  }
+  margin-top: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px; /* Adjust the width of the slider */
+}
+
+.threshold-slider label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #ffffff; /* Set text color to white for better contrast */
+}
+
+.threshold-slider .slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%; /* Ensure the slider takes up the full width */
+  height: 6px; /* Adjust the height of the slider track */
+  background: #d1d5db; /* Tailwind's gray-300 */
+  border-radius: 5px; /* Round the edges of the track */
+  outline: none;
+  transition: background 0.3s ease;
+}
+
+.threshold-slider .slider:hover {
+  background: #9ca3af; /* Tailwind's gray-400 */
+}
+
+.threshold-slider .slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #3b82f6; /* Tailwind's blue-500 */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.threshold-slider .slider::-webkit-slider-thumb:hover {
+  background: #2563eb; /* Tailwind's blue-600 */
+}
+
+.threshold-slider .slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #3b82f6; /* Tailwind's blue-500 */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.threshold-slider .slider::-moz-range-thumb:hover {
+  background: #2563eb; /* Tailwind's blue-600 */
+}
+
+/* Vertical slider container */
+.threshold-slider.vertical {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 10px;
+  height: 200px;
+  margin-top: 0;
+}
+
+/* Vertical slider thumb centering fix */
+.threshold-slider.vertical .slider {
+  -webkit-appearance: slider-vertical;
+  writing-mode: bt-lr;
+  width: 6px;
+  height: 100%;
+  padding: 0 5px; /* Add padding for thumb space */
+  margin: 10px 0;
+}
+
+/* WebKit (Chrome/Safari) thumb centering */
+.threshold-slider.vertical .slider::-webkit-slider-thumb {
+  margin-left: 0px; /* Half of thumb width (16px/2 = 8px) minus half of track width (6px/2 = 3px) */
+  transform: none; /* Remove previous transform */
+}
+
+/* Firefox thumb centering */
+.threshold-slider.vertical .slider::-moz-range-thumb {
+  margin-left: -5px;
+  transform: none;
+}
