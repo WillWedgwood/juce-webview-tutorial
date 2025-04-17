@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { useRef, useMemo, useCallback } from 'react';
 import { useD3Graph } from '../hooks/useD3Graph';
 import '../styles/components/graph-base.css';
+import ThresholdSlider from './ThresholdSlider';
 
 export const AudioClassificationGraph = ({ 
   data = [], 
@@ -107,6 +108,13 @@ export const AudioClassificationGraph = ({
         width={fullConfig.width} 
         height={fullConfig.height} 
       />
+      <div className="embedded-slider">
+        <ThresholdSlider 
+          threshold={threshold}
+          setThreshold={setThreshold}
+          vertical
+        />
+      </div>
     </div>
   );
 };

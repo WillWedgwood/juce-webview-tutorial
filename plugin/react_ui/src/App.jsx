@@ -87,6 +87,7 @@ function App() {
     };
   }, [threshold]);
 
+  // App.jsx (only modify the return section)
   return (
     <div className="app-container">
       <h1>Live Audio Classification</h1>
@@ -94,13 +95,8 @@ function App() {
         Status: {connectionStatus.toUpperCase()}
       </div>
 
-      <div className="graph-controls">
-        <LabelDropdown 
-          labels={labels} 
-          removedLabels={removedLabels} 
-          setRemovedLabels={setRemovedLabels} 
-        />
-        
+      {/* View toggle buttons stay above */}
+      <div className="view-toggle-container">
         <div className="graph-toggle">
           <button 
             className={graphType === 'classification' ? 'active' : ''}
@@ -117,44 +113,41 @@ function App() {
         </div>
       </div>
 
-      <div className="graph-container">
-        {/* Render the slider only for the Classification Graph */}
-        {graphType === 'classification' && (
-          <div className="vertical-slider-container">
-            <ThresholdSlider threshold={threshold} setThreshold={setThreshold} vertical={true} />
-          </div>
-        )}
-
-        {/* Render the appropriate graph */}
+      {/* Graph area */}
+      <div className="graph-area">
         {graphType === 'classification' ? (
-          <AudioClassificationGraph 
-            data={classifications} 
-            labels={labels} 
-            removedLabels={removedLabels} 
-            config={{
-              colors: { 
-                high: "#ff0000", 
-                normal: "#ffa500",
-                disconnected: "#888888"
-              },
-              circleRadius: 8,
-              width: 900,
-              height: 500,
-              connectionStatus
-            }}
-          />
+          <>
+            <AudioClassificationGraph 
+              data={classifications} 
+              labels={labels} 
+              removedLabels={removedLabels} 
+              config={{/*...*/}}
+            />
+            <div className="vertical-slider-container">
+              <ThresholdSlider 
+                threshold={threshold} 
+                setThreshold={setThreshold} 
+                vertical={true} 
+              />
+            </div>
+          </>
         ) : (
           <ConfidenceTrackingGraph 
             data={confidenceData} 
             labels={labels} 
             removedLabels={removedLabels} 
-            config={{
-              width: 900,
-              height: 500,
-              connectionStatus
-            }}
+            config={{/*...*/}}
           />
         )}
+      </div>
+
+      {/* Label dropdown moves below */}
+      <div className="dropdown-container">
+        <LabelDropdown 
+          labels={labels} 
+          removedLabels={removedLabels} 
+          setRemovedLabels={setRemovedLabels} 
+        />
       </div>
     </div>
   );

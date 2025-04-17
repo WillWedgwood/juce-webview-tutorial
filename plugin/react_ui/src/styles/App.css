@@ -7,6 +7,7 @@
   min-height: 100vh;
   color: white;
   font-family: sans-serif;
+  position: relative; /* Ensure the connection status is positioned relative to this container */
 }
 
 h1 {
@@ -21,12 +22,14 @@ svg {
 }
 
 .connection-status {
-  margin-bottom: 20px;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  padding: 0.5rem;
+  position: absolute; /* Position it relative to the parent container */
+  top: 1rem; /* Distance from the top */
+  right: 1rem; /* Distance from the right */
+  font-size: 14px; /* Slightly smaller font size */
+  font-weight: normal; /* Make it less prominent */
+  padding: 0.5rem 1rem;
   border-radius: 4px;
+  z-index: 10; /* Ensure it appears above other elements */
 }
 
 .connection-status.connected {
@@ -48,17 +51,11 @@ svg {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start; /* Ensure content starts at the top */
   padding: 20px;
   color: #fff; /* Ensure text is visible on a dark background */
-}
-
-.graph-controls {
-  display: flex;
-  flex-wrap: wrap; /* Allow wrapping for smaller screens */
-  justify-content: center; /* Center the controls horizontally */
-  align-items: center;
-  gap: 20px; /* Add spacing between controls */
-  margin-bottom: 20px;
+  min-height: 100vh; /* Ensure the container takes up the full height of the viewport */
+  position: relative; /* Ensure absolute positioning works inside this container */
 }
 
 .graph-toggle {
@@ -111,3 +108,34 @@ svg {
   font-size: 18px;
   text-align: center;
 }
+
+/* View toggle container (above graph) */
+.view-toggle-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0 0 20px 0;
+  padding: 0;
+}
+
+/* Dropdown container (below graph) */
+.dropdown-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 20px 0 0 0;
+  padding: 15px;
+  background: #1e293b;
+  border-radius: 12px;
+}
+
+/* Update graph area */
+.graph-area {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Keep your existing .graph-toggle styles */
+/* Keep your existing .vertical-slider-container styles */
