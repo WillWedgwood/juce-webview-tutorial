@@ -34,10 +34,11 @@
   .dropdown-item {
     padding: 8px 12px;
     cursor: pointer;
-    color: white; /* White text */
-    background-color: #1e293b; /* slate-800 */
+    color: #ffffff;
+    background-color: #1e293b; /* Default background */
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
     text-align: center; /* Center text */
-    border-radius: 4px; /* Rounded corners */
     display: flex; /* Use flexbox for alignment */
     align-items: center; /* Vertically center text */
     justify-content: center; /* Horizontally center text */
@@ -47,11 +48,11 @@
   
   /* Dropdown item hover */
   .dropdown-item:hover {
-    background-color: #334155; /* slate-700 */
+    background-color: #475569; /* Hover background */
   }
   
   /* Selected dropdown item */
   .dropdown-item.selected {
-    background-color: #475569; /* slate-600 */
-    color: white; /* White text */
+    background-color: #3774ba; /* Highlight enabled classifications */
+    color: #ffffff;
   }
