@@ -6,6 +6,6 @@
   /* Confidence-specific additions */
   .confidence-tracking-graph .legend {
     position: absolute;
-    right: 1rem;
-    top: 3rem;
+    right: auto;
+    top: auto;
   }

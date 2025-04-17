@@ -126,7 +126,7 @@ export const ConfidenceTrackingGraph = ({
     legendItems.merge(legendEnter)
       .transition()
       .duration(200)
-      .attr("transform", (d, i) => `translate(${xScale.range()[0] - 80}, ${20 + i * 20})`);
+      .attr("transform", (d, i) => `translate(${20}, ${20 + i * 20})`); // Adjust X and Y positions
 
     legendItems.merge(legendEnter).select("rect")
       .attr("fill", d => colorScale(d));
