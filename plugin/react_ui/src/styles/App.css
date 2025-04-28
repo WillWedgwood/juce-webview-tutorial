@@ -129,7 +129,7 @@
     padding: 15px;
     background: #1e293b;
     border-radius: 12px;
-    z-index: 10; /* Even higher than the parent */
+    z-index: 11; /* Even higher than the parent */
   }
 
   
