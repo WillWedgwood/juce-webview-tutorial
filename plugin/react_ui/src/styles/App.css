@@ -1,147 +1,156 @@
-#root {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-  background-color: #0f172a; /* slate-900 */
-  min-height: 100vh;
-  color: white;
-  font-family: sans-serif;
-  position: relative; /* Ensure the connection status is positioned relative to this container */
-}
-
-h1 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-}
-
-svg {
-  background-color: #1e293b; /* slate-800 */
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.connection-status {
-  position: absolute; /* Position it relative to the parent container */
-  top: 1rem; /* Distance from the top */
-  right: 1rem; /* Distance from the right */
-  font-size: 14px; /* Slightly smaller font size */
-  font-weight: normal; /* Make it less prominent */
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  z-index: 10; /* Ensure it appears above other elements */
-}
-
-.connection-status.connected {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.connection-status.disconnected {
-  background-color: #F44336;
-  color: white;
-}
-
-.connection-status.connecting {
-  background-color: #FFC107;
-  color: black;
-}
-
-.app-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Ensure content starts at the top */
-  padding: 20px;
-  color: #fff; /* Ensure text is visible on a dark background */
-  min-height: 100vh; /* Ensure the container takes up the full height of the viewport */
-  position: relative; /* Ensure absolute positioning works inside this container */
-}
-
-.graph-toggle {
-  display: flex;
-  gap: 10px; /* Add spacing between toggle buttons */
-}
-
-.graph-toggle button {
-  padding: 10px 20px;
-  font-size: 14px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  background-color: #444; /* Default button background */
-  color: #fff;
-  transition: background-color 0.3s ease;
-}
-
-.graph-toggle button:hover {
-  background-color: #475569; /* slate-600 */
-}
-
-.graph-toggle button.active {
-  background-color: #007bff; /* Highlight active button */
-  color: #fff;
-}
-
-.graph-container {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: center;
-  width: 100%;
-  max-width: 900px;
-  gap: 20px;
-  position: relative; /* Add this to make absolute positioning work for child elements */
-}
-
-.graph-container h2 {
-  margin-bottom: 10px;
-  font-size: 18px;
-  text-align: center;
-}
-
-.slider-container-left {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 150px;
-  padding: 10px;
-  background: #1e293b;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-}
-
-/* View toggle container (above graph) */
-.view-toggle-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin: 0 0 20px 0;
-  padding: 0;
-}
-
-/* Dropdown container (below graph) */
-.dropdown-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin: 20px 0 0 0;
-  padding: 15px;
-  background: #1e293b;
-  border-radius: 12px;
-}
-
-/* Update graph area */
-.graph-area {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  width: 100%;
-}
-
-/* Keep your existing .graph-toggle styles */
-/* Keep your existing .vertical-slider-container styles */
+/* ----------------------------
+   Base Styles & Layout
+   ---------------------------- */
+   #root {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    background-color: #0f172a; /* slate-900 */
+    min-height: 100vh;
+    color: white;
+    font-family: sans-serif;
+    position: relative;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  svg {
+    background-color: #1e293b; /* slate-800 */
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* ----------------------------
+     Connection Status Indicator
+     ---------------------------- */
+  .connection-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    z-index: 10;
+  }
+  
+  .connection-status.connected {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .connection-status.disconnected {
+    background-color: #F44336;
+    color: white;
+  }
+  
+  .connection-status.connecting {
+    background-color: #FFC107;
+    color: black;
+  }
+  
+  /* ----------------------------
+     Main App Container
+     ---------------------------- */
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    color: #fff;
+    min-height: 100vh;
+    position: relative;
+  }
+  
+  /* ----------------------------
+     Graph View Controls
+     ---------------------------- */
+  .view-toggle-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 0 20px 0;
+    padding: 0;
+  }
+  
+  .graph-toggle {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .graph-toggle button {
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #444;
+    color: #fff;
+    transition: background-color 0.3s ease;
+  }
+  
+  .graph-toggle button:hover {
+    background-color: #475569; /* slate-600 */
+  }
+  
+  .graph-toggle button.active {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  /* ----------------------------
+     Graph Containers
+     ---------------------------- */
+  .graph-area {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+  }
+  
+  .graph-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    gap: 20px;
+    position: relative; /* Needed for absolute positioning of slider */
+  }
+  
+  /* ----------------------------
+     Threshold Slider (Left Position)
+     ---------------------------- */
+  .slider-container-left {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    padding: 10px;
+    background: #1e293b;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+  
+  /* ----------------------------
+     Label Dropdown Controls
+     ---------------------------- */
+  .dropdown-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0 0 0;
+    padding: 15px;
+    background: #1e293b;
+    border-radius: 12px;
+  }

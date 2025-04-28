@@ -4,23 +4,32 @@ import { ConfidenceTrackingGraph } from './components/ConfidenceTrackingGraph';
 import { ClassificationLabels } from './constants/constants';
 import { LabelDropdown } from './components/LabelDropdown';
 import { convertScoresToClassifications, convertScoresToConfidence } from './utils/dataHandler';
-import ThresholdSlider from './components/ThresholdSlider'; // Import the ThresholdSlider component
+import ThresholdSlider from './components/ThresholdSlider';
 import * as Juce from "./juce/index.js";
 import './styles/App.css';
 
 function App() {
-  const [classifications, setClassifications] = useState([]); // For classification data
-  const [confidenceData, setConfidenceData] = useState([]); // For confidence data
-  const [removedLabels, setRemovedLabels] = useState([]);
+  // ----------------------------
+  // State Management
+  // ----------------------------
+  const [classifications, setClassifications] = useState([]);        // Classification data points
+  const [confidenceData, setConfidenceData] = useState([]);          // Confidence tracking data
+  const [removedLabels, setRemovedLabels] = useState([]);            // Labels to hide from graphs
   const [connectionStatus, setConnectionStatus] = useState('connecting');
-  const [threshold, setThreshold] = useState(0.5); // Threshold for classification
-  const [graphType, setGraphType] = useState('confidence'); // 'classification' or 'confidence'
+  const [threshold, setThreshold] = useState(0.5);                   // Classification threshold
+  const [graphType, setGraphType] = useState('confidence');          // Active graph view type
+  
+  // Available classification labels
   const labels = Object.values(ClassificationLabels);
 
+  // ----------------------------
+  // Data Processing & Connection
+  // ----------------------------
   useEffect(() => {
     let isMounted = true;
     let juceEventListener = null;
 
+    // Handle incoming YAMNet data
     const handleYamnetData = async () => {
       try {
         const response = await fetch(Juce.getBackendResourceAddress("yamnetOut.json"));
@@ -28,29 +37,28 @@ function App() {
         
         const yamnetOut = await response.text();
         const yamnetOutput = JSON.parse(yamnetOut);
-
         const currentTime = Date.now();
 
-        // Process classifications
-        const newClassifications = convertScoresToClassifications(yamnetOutput.scores, threshold).map(({ label, value }) => ({
-          id: `${currentTime}-${label}`,
-          timestamp: currentTime,
-          label,
-          value
-        }));
+        // Process classification data with current threshold
+        const newClassifications = convertScoresToClassifications(yamnetOutput.scores, threshold)
+          .map(({ label, value }) => ({
+            id: `${currentTime}-${label}`,
+            timestamp: currentTime,
+            label,
+            value
+          }));
 
-        // Process confidence data
+        // Update confidence tracking data with 60-second window
         setConfidenceData(prevConfidenceData =>
-          convertScoresToConfidence(yamnetOutput.scores, prevConfidenceData, 60000) // 60-second time window
+          convertScoresToConfidence(yamnetOutput.scores, prevConfidenceData, 60000)
         );
 
         if (isMounted) {
-          // Update classifications
+          // Update classifications with 60-second window
           setClassifications(prev => [
-            ...prev.filter(d => d.timestamp >= currentTime - 60000), // Keep points within the timeWindow
+            ...prev.filter(d => d.timestamp >= currentTime - 60000),
             ...newClassifications
           ]);
-
           setConnectionStatus('connected');
         }
       } catch (error) {
@@ -59,6 +67,7 @@ function App() {
       }
     };
 
+    // Initialize JUCE connection
     const initJuceConnection = () => {
       if (window.__JUCE__?.backend) {
         try {
@@ -78,6 +87,7 @@ function App() {
 
     const connectionTimeout = setTimeout(initJuceConnection, 300);
 
+    // Cleanup function
     return () => {
       isMounted = false;
       clearTimeout(connectionTimeout);
@@ -87,15 +97,18 @@ function App() {
     };
   }, [threshold]);
 
-  // App.jsx (only modify the return section)
+  // ----------------------------
+  // UI Components
+  // ----------------------------
   return (
     <div className="app-container">
+      {/* Header Section */}
       <h1>Live Audio Classification</h1>
       <div className={`connection-status ${connectionStatus}`}>
         Status: {connectionStatus.toUpperCase()}
       </div>
 
-      {/* View toggle buttons stay above */}
+      {/* View Toggle Controls */}
       <div className="view-toggle-container">
         <div className="graph-toggle">
           <button 
@@ -113,7 +126,7 @@ function App() {
         </div>
       </div>
 
-      {/* Graph area */}
+      {/* Main Graph Area */}
       <div className="graph-area">
         {graphType === 'classification' ? (
           <div className="graph-container">
@@ -143,7 +156,7 @@ function App() {
         )}
       </div>
 
-      {/* Label dropdown moves below */}
+      {/* Label Filter Controls */}
       <div className="dropdown-container">
         <LabelDropdown 
           labels={labels} 
