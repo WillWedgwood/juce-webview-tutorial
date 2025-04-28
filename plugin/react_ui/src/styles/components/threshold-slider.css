@@ -1,5 +1,5 @@
 .threshold-slider {
-  margin-top: 20px;
+  margin-top: 0px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -34,7 +34,7 @@
   width: 16px;
   height: 16px;
   background: #3b82f6; /* Tailwind's blue-500 */
-  border-radius: 50%;
+  border-radius: 90%;
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -44,7 +44,7 @@
 }
 
 .threshold-slider .slider::-moz-range-thumb {
-  width: 16px;
+  width: 8px;
   height: 16px;
   background: #3b82f6; /* Tailwind's blue-500 */
   border-radius: 50%;

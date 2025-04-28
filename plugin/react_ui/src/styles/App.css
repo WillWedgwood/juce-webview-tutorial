@@ -83,30 +83,36 @@ svg {
   color: #fff;
 }
 
-.vertical-slider-container {
-  position: absolute; /* Position the slider absolutely within the container */
-  left: 0; /* Align the slider to the left edge of the container */
-  top: 10; /* Align the slider to the top of the container */
-  background: #1e293b; /* Background color for the slider container */
-  padding: 15px 10px;
-  border-radius: 8px;
-  z-index: 10; /* Ensure the slider appears above the graph */
-}
-
 .graph-container {
-  display: flex; /* Align items horizontally */
-  flex-direction: row; /* Horizontal layout */
-  align-items: flex-start; /* Align items at the top */
-  justify-content: center; /* Center the graph and slider horizontally */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
   width: 100%;
-  max-width: 900px; /* Limit the graph width */
-  gap: 20px; /* Add spacing between the slider and the graph */
+  max-width: 900px;
+  gap: 20px;
+  position: relative; /* Add this to make absolute positioning work for child elements */
 }
 
 .graph-container h2 {
   margin-bottom: 10px;
   font-size: 18px;
   text-align: center;
+}
+
+.slider-container-left {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  padding: 10px;
+  background: #1e293b;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
 /* View toggle container (above graph) */

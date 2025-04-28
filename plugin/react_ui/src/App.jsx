@@ -116,28 +116,30 @@ function App() {
       {/* Graph area */}
       <div className="graph-area">
         {graphType === 'classification' ? (
-          <>
+          <div className="graph-container">
+            <div className="slider-container-left">
+              <ThresholdSlider 
+                threshold={threshold} 
+                setThreshold={setThreshold} 
+                vertical={false} 
+              />
+            </div>
             <AudioClassificationGraph 
               data={classifications} 
               labels={labels} 
               removedLabels={removedLabels} 
               config={{/*...*/}}
             />
-            <div className="vertical-slider-container">
-              <ThresholdSlider 
-                threshold={threshold} 
-                setThreshold={setThreshold} 
-                vertical={true} 
-              />
-            </div>
-          </>
+          </div>
         ) : (
-          <ConfidenceTrackingGraph 
-            data={confidenceData} 
-            labels={labels} 
-            removedLabels={removedLabels} 
-            config={{/*...*/}}
-          />
+          <div className="graph-container">
+            <ConfidenceTrackingGraph 
+              data={confidenceData} 
+              labels={labels} 
+              removedLabels={removedLabels} 
+              config={{/*...*/}}
+            />
+          </div>
         )}
       </div>
 
