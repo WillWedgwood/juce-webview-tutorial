@@ -68,21 +68,38 @@
   }
   
   /* ----------------------------
-     Graph View Controls
-     ---------------------------- */
-  .view-toggle-container {
+   Combined Graph Controls Section
+   ---------------------------- */
+  .graph-controls-section {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
-    margin: 0 0 20px 0;
-    padding: 0;
+    margin: 0 0 0 0;
+    padding: 5px;
+    background: #1e293b;
+    border-radius: 12px;
   }
-  
+
+  .enabled-classifications {
+    flex: flex;
+    padding-left: 10px; /* Added left padding */
+    margin-right: 20px;
+  }
+
+  .graph-view-controls {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 20px; /* Add right padding to push buttons left */
+  }
+
+  /* Update the graph toggle to remove margin from container */
   .graph-toggle {
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    margin: 0; /* Remove any default margins */
   }
-  
+
   .graph-toggle button {
     padding: 10px 20px;
     font-size: 14px;
@@ -90,18 +107,31 @@
     border: none;
     border-radius: 5px;
     background-color: #444;
-    color: #fff;
+    color: #ebe6e6;
     transition: background-color 0.3s ease;
   }
   
   .graph-toggle button:hover {
-    background-color: #475569; /* slate-600 */
+    background-color: #555;
   }
-  
-  .graph-toggle button.active {
-    background-color: #007bff;
-    color: #fff;
+
+  /* Remove the old view-toggle-container styles */
+  .view-toggle-container {
+    display: none;
   }
+
+  /* Remove the old dropdown-container styles */
+  .dropdown-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 0 0 0;
+    padding: 15px;
+    background: #1e293b;
+    border-radius: 12px;
+    z-index: 10; /* Even higher than the parent */
+  }
+
   
   /* ----------------------------
      Graph Containers
@@ -111,6 +141,7 @@
     justify-content: center;
     gap: 20px;
     width: 100%;
+    margin-top: 0; /* Ensure no extra top margin */
   }
   
   .graph-container {
@@ -140,17 +171,4 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 10;
-  }
-  
-  /* ----------------------------
-     Label Dropdown Controls
-     ---------------------------- */
-  .dropdown-container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 20px 0 0 0;
-    padding: 15px;
-    background: #1e293b;
-    border-radius: 12px;
   }

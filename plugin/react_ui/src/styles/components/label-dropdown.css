@@ -1,5 +1,7 @@
 /* Dropdown container */
-.dropdown-container {
+  .dropdown-container {
+    position: relative; /* Add this */
+    display: inline-block; /* Add this */
     margin-bottom: 20px;
   }
   
@@ -13,21 +15,24 @@
     cursor: pointer;
   }
   
-  /* Dropdown options container */
+  /* Dropdown options - updated positioning */
   .dropdown-options {
-    position: absolute; /* Ensure the dropdown doesn't affect parent layout */
+    position: absolute;
+    top: 100%; /* Position below button */
+    left: 0;
     margin-top: 5px;
-    border: 1px solid #334155; /* slate-700 */
+    z-index: 9999;
+    /* Keep all your other styles */
+    border: 1px solid #334155;
     border-radius: 4px;
-    background-color: #1e293b; /* slate-800 */
+    background-color: #1e293b;
     max-height: 200px;
-    overflow-y: auto; /* Allow scrolling within the dropdown */
-    z-index: 10; /* Ensure it appears above other elements */
+    overflow-y: auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Fixed 3 columns */
-    gap: 10px; /* Space between items */
-    padding: 10px; /* Add padding inside the grid */
-    width: 300px; /* Set a fixed width for the dropdown */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+    width: 300px;
   }
   
   /* Dropdown item */

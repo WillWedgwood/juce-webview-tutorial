@@ -107,25 +107,37 @@ function App() {
       <div className={`connection-status ${connectionStatus}`}>
         Status: {connectionStatus.toUpperCase()}
       </div>
-
-      {/* View Toggle Controls */}
-      <div className="view-toggle-container">
-        <div className="graph-toggle">
-          <button 
-            className={graphType === 'classification' ? 'active' : ''}
-            onClick={() => setGraphType('classification')}
-          >
-            Classification View
-          </button>
-          <button 
-            className={graphType === 'confidence' ? 'active' : ''}
-            onClick={() => setGraphType('confidence')}
-          >
-            Confidence View
-          </button>
+  
+      {/* Combined Graph Controls Section */}
+      <div className="graph-controls-section">
+        {/* Enabled Classifications (Left) */}
+        <div className="enabled-classifications">
+          <LabelDropdown 
+            labels={labels} 
+            removedLabels={removedLabels} 
+            setRemovedLabels={setRemovedLabels} 
+          />
+        </div>
+  
+        {/* Graph View Controls (Right) */}
+        <div className="graph-view-controls">
+          <div className="graph-toggle">
+            <button 
+              className={graphType === 'classification' ? 'active' : ''}
+              onClick={() => setGraphType('classification')}
+            >
+              Classification View
+            </button>
+            <button 
+              className={graphType === 'confidence' ? 'active' : ''}
+              onClick={() => setGraphType('confidence')}
+            >
+              Confidence View
+            </button>
+          </div>
         </div>
       </div>
-
+  
       {/* Main Graph Area */}
       <div className="graph-area">
         {graphType === 'classification' ? (
@@ -154,15 +166,6 @@ function App() {
             />
           </div>
         )}
-      </div>
-
-      {/* Label Filter Controls */}
-      <div className="dropdown-container">
-        <LabelDropdown 
-          labels={labels} 
-          removedLabels={removedLabels} 
-          setRemovedLabels={setRemovedLabels} 
-        />
       </div>
     </div>
   );
